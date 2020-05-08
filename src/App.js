@@ -8,6 +8,7 @@ import {
 
 // Components
 import Home from './pages/Home/Home'
+import Search from './pages/Search/Search'
 
 function App() {
   return (
@@ -16,6 +17,8 @@ function App() {
         <Switch>
           <Route exact path="/"
             component={props => <Home {...props} />} />
+          <Route path="/search"
+            component={props => <Search {...props} />} />
         </Switch>
       </Router>
     </div>
