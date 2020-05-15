@@ -2,19 +2,19 @@
     grid-column: 1 / 3;
     background: transparent linear-gradient(155deg, #2096AB 0%, #43CEA2 100%) 0% 0% no-repeat padding-box;
     display: grid;
-    grid-template-columns: 4fr 4fr 280px;
+    grid-template-columns: 4fr 4fr 220px;
     padding: 85px;
 }
 
 .label {
-    font-size: 50px;
+    font-size: 42px;
     color: #fff;
     margin: 0;
 }
 
 .button {
-    width: 188px;
-    height: 171px;
+    width: 164px;
+    height: 164px;
     box-shadow: 0px 0px 6px #55555580;
     border: 5px solid #FFFFFF;
     border-radius: 70px;
@@ -24,7 +24,8 @@
 }
 
 .link {
-    font-size: 33px;
+    font-size: 28px;
+    font-weight: 200;
     color: #fff;
     display: block;
     margin: 0;
@@ -32,7 +33,7 @@
 }
 
 .header {
-    font-size: 120px;
+    font-size: 100px;
     color: #fff;
     margin: 0;
 }
@@ -48,8 +49,8 @@
 }
 .temperature {
     position: absolute;
-    font-size: 208px;
-    line-height: 208px;
+    font-size: 174px;
+    line-height: 174px;
     color: #fff;
     bottom: 0;
     right: 0;

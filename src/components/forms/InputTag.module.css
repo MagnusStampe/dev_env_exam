@@ -15,11 +15,11 @@
 }
 
 .inputContainer.tall {
-    min-height: 80px;
+    min-height: 180px;
 }
 
 .inputContainer.tall .input {
-    min-height: 80px;
+    min-height: 160px;
 }
 
 .label {

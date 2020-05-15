@@ -5,13 +5,13 @@
 .propertiesContainer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 35px 90px;
+    grid-gap: 35px 84px;
     margin-bottom: 50px;
 }
 
 .headline {
     color: #135F6D;
-    font-size: 45px;
+    font-size: 38px;
     margin-bottom: 50px;
 }
 

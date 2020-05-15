@@ -61,7 +61,7 @@ export class TextareaTag extends Component {
 
         return (
             <div className={containerClasses}>
-                <label htmlFor={textareaID}>{label}</label>
+                <label className={styles.label} htmlFor={textareaID}>{label}</label>
                 <textarea className={styles.input} id={textareaID} name={name} />
             </div>
         )
