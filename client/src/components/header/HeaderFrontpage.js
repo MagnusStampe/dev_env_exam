@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 export default class HeaderMain extends Component {
   state = {
@@ -13,41 +14,16 @@ export default class HeaderMain extends Component {
     console.log(this.props);
     return (
       <div>
-        <div className="flexWrapper">
-          <div className="logoContainer">
-            <div className="logo">ddddddd</div>
-          </div>
-
-          <div className="form">
-            <form
-              onSubmit={() => this.props.handleTravelInfoChange(this.state)}
-            >
-              <input
-                type="text"
-                className="destination"
-                onChange={event =>
-                  this.setState({ destination: event.target.value })}
-              />
-              <input
-                type="date"
-                className="checkIn"
-                onChange={event =>
-                  this.setState({ checkIn: event.target.value })}
-              />
-              <input
-                type="date"
-                className="checkOut"
-                onChange={event =>
-                  this.setState({ checkOut: event.target.value })}
-              />
-              <input
-                type="number"
-                className="guests"
-                onChange={event =>
-                  this.setState({ guests: event.target.value })}
-              />
-              <button>Submit</button>
-            </form>
+        <div className="navContainerFrontpage">
+          <div className="flexWrapper">
+            <div className="logoContainer">
+              <div className="logo">ddddddd</div>
+            </div>
+            <div className="menuContainer">
+              <div className="help">Help</div>
+              <Link to="/login">Login</Link>
+              <Link to="/signup">Sign up</Link>
+            </div>
           </div>
         </div>
       </div>
