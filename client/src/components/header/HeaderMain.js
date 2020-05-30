@@ -1,60 +1,63 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import styles from "./HeaderMain.module.css";
+import InputTag from "../forms/InputTag";
 
 export default class HeaderMain extends Component {
   state = {
-    destination: null,
-    checkIn: null,
-    checkOut: null,
-    guests: null
+    // destination: null,
+    // checkIn: null,
+    // checkOut: null,
+    // guests: null,
+
+    loggedIn: false
   };
 
-  onFormSubmit = e => {
-    this.props.handleTravelInfoChange(this.state);
-    e.preventDefault();
-  };
+  // onFormSubmit = e => {
+  //   this.props.handleTravelInfoChange(this.state);
+  //   e.preventDefault();
+  // };
 
   render() {
-    console.log("save and test: " + this.state.guests);
-
     return (
-      <div>
-        <div className="navContainerFrontpage">
-          <div className="flexWrapper">
-            <div className="logoContainer">
-              <div className="logo">ddddddd</div>
+      <section className={styles.mainContainer}>
+        <div className={styles.wrapper}>
+          <div className={styles.logoContainer}>
+            <div className={styles.logo}>
+              <Link to="/">LOGO</Link>
             </div>
-            <div className="formContainer">
-              <form onSubmit={e => this.onFormSubmit(e)}>
-                <input
-                  type="text"
-                  className="destination"
-                  onChange={event =>
-                    this.setState({ destination: event.target.value })}
-                />
-                <input
+          </div>
+          <div className={styles.formContainer}>
+            <form className={styles.form}>
+              <div className={styles.inputContainer}>
+                <InputTag type="text" label="Destination" name="destTxt" />
+              </div>
+              <div className={styles.inputContainer}>
+                <InputTag
                   type="date"
-                  className="checkIn"
-                  onChange={event =>
-                    this.setState({ checkIn: event.target.value })}
+                  label="Check in / check out"
+                  name="checkInOutTxt1"
+                  name2="checkInOutTxt2"
                 />
-                <input
-                  type="date"
-                  className="checkOut"
-                  onChange={event =>
-                    this.setState({ checkOut: event.target.value })}
-                />
-                <input
-                  type="number"
-                  className="guests"
-                  onChange={event =>
-                    this.setState({ guests: event.target.value })}
-                />
-                <button>Submit</button>
-              </form>
+              </div>
+              <div className={styles.inputContainer}>
+                <InputTag type="number" label="Guests" name="guestsTxt" />
+              </div>
+              <div className={styles.submitContainer}>
+                <button className={styles.submitButton}>Search</button>
+              </div>
+            </form>
+          </div>
+          <div className={styles.menuContainer}>
+            <div className={styles.menuItem}>
+              <Link to="/login">Login</Link>
+            </div>
+            <div className={styles.menuItem}>
+              <Link to="/signup">Sign up</Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 }
