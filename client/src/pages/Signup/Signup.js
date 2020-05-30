@@ -7,20 +7,73 @@ export default class Signup extends Component {
   state = {
     user: {
       username: "",
+      email: "",
       password: "",
       phoneNumber: "",
+      phoneCode: "",
       countryCode: "",
       ibanCode: "",
       cvv: "",
       expDate: "",
-      userType: ""
+      userType: "guest"
     }
   };
   handleInputChange = event => {
     this.setState({
       user: { [event.target.name]: event.target.value }
     });
-    console.log(this.state.user.username);
+    console.log(this.state.user);
+  };
+
+  onFormSubmit = async event => {
+    event.preventDefault();
+    const {
+      username,
+      email,
+      password,
+      phoneNumber,
+      countryCode,
+      ibanCode,
+      cvv,
+      expDate,
+      userType
+    } = this.state.user;
+
+    console.log(
+      username,
+      email,
+      password,
+      phoneNumber,
+      countryCode,
+      ibanCode,
+      cvv,
+      expDate,
+      userType
+    );
+    await fetch("http://localhost:8080/users/create", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        ContentType: "application/json"
+      },
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password,
+        phoneNumber: phoneNumber,
+        countryCode: countryCode,
+        ibanCode: ibanCode,
+        cvv: cvv,
+        expDate: expDate,
+        userType: userType
+      })
+    })
+      .then(res => {
+        res.json();
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   render() {
@@ -29,7 +82,7 @@ export default class Signup extends Component {
         <div className={styles.container}>
           <h1 className={styles.title}>Sign up</h1>
           <div className={styles.formContainer}>
-            <form className={styles.form} method="POST">
+            <form className={styles.form} onSubmit={this.onFormSubmit}>
               <div className={styles.wrapper}>
                 <div className={styles.wrapperContainer}>
                   <div className={styles.inputContainer}>
@@ -49,7 +102,7 @@ export default class Signup extends Component {
                       onChange={this.handleInputChange}
                     />
                     <InputTag
-                      type="text"
+                      type="password"
                       label="Password"
                       name="password"
                       onChange={this.handleInputChange}
@@ -58,7 +111,6 @@ export default class Signup extends Component {
                       type="text"
                       label="Repeat password"
                       name="repeatPassword"
-                      onChange={this.handleInputChange}
                     />
                     <InputTag
                       type="text"
@@ -67,6 +119,12 @@ export default class Signup extends Component {
                       onChange={this.handleInputChange}
                     />
                     <InputTag type="text" label="Phone code" name="phoneCode" />
+                    <InputTag
+                      type="text"
+                      label="Phone code"
+                      name="phoneCode"
+                      onChange={this.handleInputChange}
+                    />
                     <InputTag
                       type="text"
                       label="Country code"
