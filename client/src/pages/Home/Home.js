@@ -16,10 +16,10 @@ export default class Home extends Component {
   render() {
     return (
       <main className={styles.pageContainer}>
-        <HeaderFrontpage />
         <section className={styles.textContainer}>
+          <HeaderFrontpage />
           <h2 className={styles.headline}>
-            Your home in the holidays -<br />Start your search now.
+            Your home in the holidays - <br />Start your search now.
           </h2>
           <form className={styles.form}>
             <InputTag type="text" label="Destination" name="destTxt" />
