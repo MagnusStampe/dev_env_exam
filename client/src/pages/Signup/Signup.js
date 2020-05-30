@@ -5,22 +5,20 @@ import InputTag from "../../components/forms/InputTag";
 
 export default class Signup extends Component {
   state = {
-    user: {
-      username: "",
-      email: "",
-      password: "",
-      phoneNumber: "",
-      phoneCode: "",
-      countryCode: "",
-      ibanCode: "",
-      cvv: "",
-      expDate: "",
-      userType: "guest"
-    }
+    username: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    phoneCode: "",
+    countryCode: "",
+    ibanCode: "",
+    cvv: "",
+    expDate: "",
+    userType: "guest"
   };
   handleInputChange = event => {
     this.setState({
-      user: { [event.target.name]: event.target.value }
+      [event.target.name]: event.target.value
     });
     console.log(this.state.user);
   };
@@ -32,39 +30,32 @@ export default class Signup extends Component {
       email,
       password,
       phoneNumber,
+      phoneCode,
       countryCode,
       ibanCode,
       cvv,
       expDate,
       userType
-    } = this.state.user;
+    } = this.state;
 
-    console.log(
-      username,
-      email,
-      password,
-      phoneNumber,
-      countryCode,
-      ibanCode,
-      cvv,
-      expDate,
-      userType
-    );
+    console.log(this.state);
+
     await fetch("http://localhost:8080/users/create", {
       method: "POST",
       credentials: "include",
       headers: {
-        ContentType: "application/json"
+        'Content-Type': "application/json"
       },
       body: JSON.stringify({
         username: username,
         email: email,
         password: password,
         phoneNumber: phoneNumber,
+        phoneCode: phoneCode,
         countryCode: countryCode,
-        ibanCode: ibanCode,
-        cvv: cvv,
-        expDate: expDate,
+        IBAN: ibanCode,
+        CVV: cvv,
+        expirationDate: expDate,
         userType: userType
       })
     })
@@ -118,7 +109,6 @@ export default class Signup extends Component {
                       name="phoneNumber"
                       onChange={this.handleInputChange}
                     />
-                    <InputTag type="text" label="Phone code" name="phoneCode" />
                     <InputTag
                       type="text"
                       label="Phone code"
