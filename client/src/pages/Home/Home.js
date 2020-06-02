@@ -36,17 +36,17 @@ export default class Home extends Component {
         <section className={styles.imageContainer}>
           <div className={styles.imageContent}>
             <div className={styles.wideImageContent}>
-              <Link className={styles.categoryButtons}>
+              <Link to="/" className={styles.categoryButtons}>
                 Explore the world PIL
               </Link>
             </div>
             <div className={styles.thinImageContent}>
-              <Link className={styles.categoryButtons}>
+              <Link to="/" className={styles.categoryButtons}>
                 Rustic and natural PIL
               </Link>
             </div>
             <div className={styles.thinImageContent}>
-              <Link className={styles.categoryButtons}>Warm and cozy PIL</Link>
+              <Link to="/" className={styles.categoryButtons}>Warm and cozy PIL</Link>
             </div>
           </div>
         </section>

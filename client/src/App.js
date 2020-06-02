@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./App.css";
-import HeaderMain from "./components/header/HeaderMain";
 import {
   BrowserRouter as Router,
   Route,
@@ -9,6 +8,7 @@ import {
 } from "react-router-dom";
 
 // Components
+import HeaderMain from './components/header/HeaderMain';
 import Home from "./pages/Home/Home";
 import Search from "./pages/Search/Search";
 import Login from "./pages/Login/Login";
@@ -27,20 +27,15 @@ class App extends Component {
     }
   };
 
-  // componentDidMount() {
-  //   console.log(this.props.history.location, "yeet");
-  // }
   onTravelInfoChange = searchQueries => {
     this.setState({ searchQueries });
   };
   render() {
-    console.log("working", this.state.searchQueries);
+    console.log(this.props.location.pathname)
     return (
       <Router>
         <div className="App">
-          {/* {this.props.history.location.pathname === "/"
-            ? <div>hehe</div>
-            : <HeaderMain handleTravelInfoChange={this.onTravelInfoChange} />} */}
+          {this.props.location.pathname !== "/" && <HeaderMain handleTravelInfoChange={this.onTravelInfoChange} />}
 
           <Switch>
             <Route exact path="/" component={props => <Home {...props} />} />

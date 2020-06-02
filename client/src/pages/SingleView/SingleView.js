@@ -29,7 +29,7 @@ export default class SingleView extends Component {
       const getCheckOut = new Date(`${checkOut}`);
       const differenceInTime = getCheckOut.getTime() - getCheckIn.getTime();
       const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-      if (differenceInDays != days) {
+      if (differenceInDays !== days) {
         this.setState({ days: differenceInDays });
       }
       return this.calculateTotalPrice();
@@ -66,15 +66,6 @@ export default class SingleView extends Component {
       wifi: "Yes",
       pets: "Pets allowed"
     };
-
-    const {
-      checkIn,
-      checkOut,
-      days,
-      dailyPrice,
-      totalPrice,
-      guests
-    } = this.state;
 
     return (
       <main className={styles.mainContainer}>

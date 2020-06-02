@@ -7,8 +7,14 @@ import PropertyCard from './../../components/Property/PropertyCard'
 import styles from './Search.module.css'
 
 export default class Search extends Component {
-    render() {
+    async componentDidMount() {
+        await fetch('http://localhost:8080/properties?startDate=2030-11-11&endDate=2030-11-14')
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(error => console.log(error))
+    }
 
+    render() {
         const property = {
             title: 'Hus',
             body: [

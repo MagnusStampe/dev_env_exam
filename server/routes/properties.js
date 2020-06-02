@@ -10,6 +10,8 @@ const client = new Client({
     port: dbCredentials.port,
 })
 
+client.connect();
+
 //##    GET     ##
 // Rent property
 router.get('/property/rent', (req, res) => {
@@ -29,8 +31,6 @@ router.get('/property/rent', (req, res) => {
         || !endDate
     ) return res.status(404).send({status: 0, message: 'Insuffient parameters provided'})
 
-    client.connect()
-    
     const queryFindPrice = `
         SELECT nPrice FROM tProperty
         WHERE nPropertyID = '${propertyID}'
@@ -47,8 +47,7 @@ router.get('/property/rent', (req, res) => {
             '${propertyID}', 
             '${startDate}', 
             '${endDate}', 
-            '${rentCost}' 
-            
+            '${rentCost}'
             )
         `
 
@@ -56,7 +55,6 @@ router.get('/property/rent', (req, res) => {
             if(err) return res.status(500).send({status: 0, message: 'Server error'})
             
             const result = test.row
-            console.log(result)
             return res.status(200).send({status: 0, message: 'Property rented successfully'})
         })
     })
@@ -108,18 +106,46 @@ router.post('/properties/create', (req, res) => {
         '${familyFriendly}'
     );`
 
-    client.connect()
     client.query(query, (err, dbRes) => {
         console.log(err)
         if(err) return res.status(500).send({status: 0, message: 'Error'})
     
-        client.end()
         return res.status(200).send({status: 1, message: 'User created'})
     })
 })
 
-
 // Search properties
+router.get('/properties', async(req, res) => {
+    const {
+        startDate,
+        endDate
+    } = req.query
+
+    if(!startDate || !endDate) return res.status(404).send({status: 0, message: 'Dates not provided'})
+
+    query = `
+        SELECT tRented."nRentID", tProperty."nPropertyID", tRented."dStart", tRented."dEnd"
+        FROM tRented
+        FULL JOIN tProperty
+        ON tRented."nPropertyID" = tProperty."nPropertyID"
+        WHERE '${startDate}' < tRented."dStart"
+        OR '${endDate}' > tRented."dEnd"
+        OR NOT EXISTS (
+            SELECT * 
+            FROM tRented 
+            WHERE tRented."nPropertyID" = tProperty."nPropertyID")
+        OR tRented."nPropertyID" NOT IN (
+            SELECT tProperty."nPropertyID"
+            FROM tProperty 
+        )
+        ORDER BY tProperty."nPropertyID"
+    `
+    client.query(query, (err, dbRes) => {
+        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+        
+        return res.status(200).send({status: 1, message: 'Properties found', results: dbRes.rows})
+    })
+})
 
 // Get property
 
@@ -156,14 +182,12 @@ router.patch('/property/update', (req, res) => {
         WHERE "nPropertyID" = '${propertyID}';
     `
 
-    client.connect()
-    client.query(updateProperty, async (err, dbRes) => {
+    client.query(updateProperty, (err, dbRes) => {
         if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
         client.query(updateFacilities, (err, dbRes) => {
             if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
-            client.end()
             return res.status(200).send({status: 0, message: 'Success'})
         })
     })
@@ -185,14 +209,12 @@ router.delete('/property/:id', (req,res) => {
     const deleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
     
  
-    client.connect()
     client.query(deleteFacilities, (err, dbRes) => {
         if(err) return res.status(500).send({status: 0, message: 'Server error'})
         
         client.query(deleteProperty, (err, dbRes) => {
             if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
-            client.end()
             res.status(200).send({status: 1, message: 'Property deleted'})
         })
     })

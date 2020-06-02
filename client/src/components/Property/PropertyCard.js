@@ -22,8 +22,8 @@ export default class PropertyCard extends Component {
                     <h3 className={styles.headline}>{title}</h3>
                     <div className={styles.body}>
                         {body ? (
-                            body.map(paragraph => (
-                                <p>{paragraph}</p>
+                            body.map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
                             ))
                         ) : (
                                 <p>No description provided</p>
