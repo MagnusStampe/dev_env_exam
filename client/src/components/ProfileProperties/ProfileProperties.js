@@ -16,7 +16,7 @@ export default class ProfileProperties extends Component {
                 'Content-Type': 'application/json'
             },
             credentials: 'include'
-          }
+        }
         await fetch(`http://localhost:8080/property/${propertyID}`, options)
             .then(res => res.json())
             .then(res => this.props.updateProperties())
@@ -33,10 +33,11 @@ export default class ProfileProperties extends Component {
                         <div key={index}>
                             <PropertyCard data={{
                                 title: property.cTitle,
-                                body: property.cDescription
+                                body: property.cDescription,
+                                nPropertyID: property.nPropertyID
                             }} />
                             <Link to={`/update-property?id=${property.nPropertyID}`} className={styles.updateButton}>Update property</Link>
-                            <button className={styles.deleteButton} onClick={()=> this.deleteProperty(property.nPropertyID)}>Delete property</button>
+                            <button className={styles.deleteButton} onClick={() => this.deleteProperty(property.nPropertyID)}>Delete property</button>
                         </div>
                     ))}
                 </div>

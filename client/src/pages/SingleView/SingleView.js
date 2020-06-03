@@ -14,7 +14,7 @@ class SingleView extends Component {
     guests: null,
     loggedIn: false,
 
-    data: null,
+    data: {},
     isLoading: true
   };
 
@@ -27,13 +27,11 @@ class SingleView extends Component {
     await fetch(`http://localhost:8080/property?id=${id}`)
       .then(res => res.json())
       .then(res => {
-        this.setState({ data: res, isLoading: false })
+        this.setState({ data: res.results, isLoading: false })
         console.log(res);
-
+        console.log(this.state.data);
       })
       .catch(error => console.log(error))
-
-
   }
 
 
@@ -68,34 +66,21 @@ class SingleView extends Component {
 
 
   render() {
-    console.log(this.props.location.data)
-    // const {
-    //   title,
-    //   body,
-    //   cost,
-    //   currency,
-    //   timeFormat,
-    //   nPropertyID
-    // } = this.props.location.data
 
-    const property = {
-      owner: "Elias Marco Lip FK",
-      type: "House FK",
-      city: "Copenhagen FK",
-      title: "yeet house",
-      body:
-        "This is a house blablablalbla - more houseoes hsouehsouehoseuhosuehs",
-      address: "Somegade 24",
-      size: 4,
-      houseSize: 200,
-      price: 300,
-      currency: "$"
-    };
+    const {
+      cTitle,
+      cDescription,
+      nPrice,
+      cAddress,
+      cPropertyType,
+      nHouseSize,
+      nSize,
+      byteaImage,
+      bAnimals,
+      bEthernet,
+      bFamilyFriendly
+    } = this.state.data;
 
-    const propertyAssets = {
-      wifi: "Yes",
-      pets: "Pets allowed"
-    };
 
     return (
       <main className={styles.mainContainer}>
@@ -106,12 +91,12 @@ class SingleView extends Component {
                 <div className={styles.containerPadding}>
                   <div>
                     <h1 className={styles.title}>
-                      {property.title}
+                      {cTitle}
                     </h1>
                   </div>
                   <div className={styles.bodyContent}>
                     <p>
-                      {property.body}
+                      {cDescription}
                     </p>
                   </div>
                 </div>
@@ -119,10 +104,10 @@ class SingleView extends Component {
                 <div className={styles.widgetWrapperContainer}>
                   <div className={styles.widgetContainer}>
                     <div className={styles.widgetWrapperItem}>
-                      <div className={styles.widgetIcon}>icon</div>
+                      <div className={styles.widgetIcon}>Size: </div>
                       <div className={styles.widgetValue}>
                         <p>
-                          {property.size}
+                          {nHouseSize} Sqm
                         </p>
                       </div>
                     </div>
@@ -130,10 +115,10 @@ class SingleView extends Component {
 
                   <div className={styles.widgetContainer}>
                     <div className={styles.widgetWrapperItem}>
-                      <div className={styles.widgetIcon}>icon</div>
+                      <div className={styles.widgetIcon}>Type: </div>
                       <div className={styles.widgetValue}>
                         <p>
-                          {property.houseSize}
+                          {cPropertyType}
                         </p>
                       </div>
                     </div>
@@ -141,21 +126,10 @@ class SingleView extends Component {
 
                   <div className={styles.widgetContainer}>
                     <div className={styles.widgetWrapperItem}>
-                      <div className={styles.widgetIcon}>icon</div>
+                      <div className={styles.widgetIcon}></div>
                       <div className={styles.widgetValue}>
                         <p>
-                          {property.price}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.widgetContainer}>
-                    <div className={styles.widgetWrapperItem}>
-                      <div className={styles.widgetIcon}>icon</div>
-                      <div className={styles.widgetValue}>
-                        <p>
-                          {property.size}
+                          {nPrice} $$ / night
                         </p>
                       </div>
                     </div>
@@ -164,40 +138,63 @@ class SingleView extends Component {
               </div>
             </div>
             <div className={styles.container}>
-              <div className={styles.imageContainer}>
-                IMAGE HER + CSS BACKGROUND POS?
+              <div className={styles.imageContainer} style={{
+                backgroundImage: `url("${byteaImage}")`,
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat'
+              }}>
               </div>
             </div>
           </div>
         </section>
         <section className={styles.sectionContainer}>
           <div className={styles.wrapper}>
-            <div className={styles.container}>
+            <div className={styles.infoContainer}>
               <div className={styles.containerPadding}>
                 <div className={styles.propertyInfoTitle}>
                   <h2>Property information</h2>
                 </div>
-                {/* loop alle property info??? */}
                 <div className={styles.propertyInfoItem}>
+                  <h3>Address</h3>
+                  <p>{cAddress}</p>
+                </div>
+                {bEthernet && <div className={styles.propertyInfoItem}>
                   <h3>Wifi</h3>
                   <p>
-                    {propertyAssets.wifi}
+                    There is Wifi
                   </p>
                 </div>
-                <div className={styles.propertyInfoItem}>
-                  <h3>Pets</h3>
-                  <p>
-                    {propertyAssets.pets}
-                  </p>
+                }
+                {bAnimals && <div className={styles.propertyInfoItem}>
+                  <div className={styles.propertyInfoItem}>
+                    <h3>Pets</h3>
+                    <p>
+                      Pets is allowed on
+                    </p>
+                  </div>
                 </div>
+                }
+                {bFamilyFriendly && <div className={styles.propertyInfoItem}>
+                  <div className={styles.propertyInfoItem}>
+                    <h3>Family Friendly</h3>
+                    <p>
+                      This property is family friendly
+                    </p>
+                  </div>
+                </div>
+                }
               </div>
             </div>
+
+
+
             <div className={styles.container}>
               <div className={styles.bookingContainer}>
                 <div className={styles.bookingTitle}>
                   <h2>Booking</h2>
                   <h3>
-                    {property.price + property.currency} / night
+                    {nPrice} $ / night
                   </h3>
                 </div>
                 <div className={styles.formContainer}>
@@ -236,6 +233,7 @@ class SingleView extends Component {
               </div>
             </div>
           </div>
+
         </section>
       </main>
     );

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from 'react-router-dom';
 
 // Components
 import ProfileProperties from './../../components/ProfileProperties/ProfileProperties';
@@ -6,29 +7,61 @@ import ProfileProperties from './../../components/ProfileProperties/ProfilePrope
 // Styles
 import styles from "./Profile.module.css";
 
-export default class Profile extends Component {
+class Profile extends Component {
   state = {
     user: {}
+  }
+
+  seeProperty = (id) => {
+    this.props.history.push({
+      pathname: "/property",
+      search: `?id=${id}`
+    })
   }
 
   componentDidMount() {
     this.getUser()
   }
 
+  deleteUser = async () => {
+    console.log(this.props.auth.user.userID)
+    console.log(this.props.auth.user.userType)
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: this.props.auth.user.userID,
+        userType: this.props.auth.user.userType
+      }),
+      credentials: 'include'
+    }
+    await fetch(`http://localhost:8080/delete-user`, options)
+      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 1) return
+        this.props.updateAuth();
+        this.props.history.push("/login");
+      })
+      .catch(err => console.log(err))
+
+  }
+
   getUser = async () => {
     const options = {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       credentials: 'include'
     }
-    if(!this.props.auth.loggedIn) return;
-    await fetch(`http://localhost:8080/${this.props.auth.user.userType === 'propertyOwner' ? 'property-owners' : 'users'}/information`,options)
+    if (!this.props.auth.loggedIn) return;
+    await fetch(`http://localhost:8080/${this.props.auth.user.userType === 'propertyOwner' ? 'property-owners' : 'users'}/information`, options)
       .then(res => res.json())
       .then(res => {
-        if(res.status !== 1) return;
-        this.setState({user: res.user})
+        if (res.status !== 1) return;
+        this.setState({ user: res.user })
       })
       .catch(err => console.log(err))
   }
@@ -42,8 +75,8 @@ export default class Profile extends Component {
         user
       }
     } = this;
-    
-    if(!user || !auth.user) return null
+
+    if (!user || !auth.user) return null
 
     return (
       <main>
@@ -63,21 +96,22 @@ export default class Profile extends Component {
                   <p>E-mail: {user.email}</p>
                   <p>Phone number: +({user.phoneCode}) {user.phoneNumber}</p>
                   <p>Country code: {user.countryCode}</p>
+                  <button className={styles.deleteButton} onClick={() => this.deleteUser()}>Delete user</button>
                 </div>
               </div>
 
               <div className={styles.wrapperContainer}>
                 <div className={styles.wrapperContent}>
-                    <h2 className={styles.title}>Creditcard:</h2>
-                    <p>IBAN code: {user.IBAN}</p>
-                    <p>Change card</p>
+                  <h2 className={styles.title}>Creditcard:</h2>
+                  <p>IBAN code: {user.IBAN}</p>
+                  <p>Change card</p>
                 </div>
               </div>
             </div>
             {auth.user.userType === 'propertyOwner' ? (
-            <div className={styles.container}>
-              <ProfileProperties properties={user.properties} updateProperties={this.getUser} />
-            </div>
+              <div className={styles.container}>
+                <ProfileProperties properties={user.properties} updateProperties={this.getUser} />
+              </div>
             ) : null}
           </div>
         </div>
@@ -85,3 +119,5 @@ export default class Profile extends Component {
     );
   }
 }
+
+export default withRouter(Profile);

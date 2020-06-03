@@ -33,8 +33,7 @@ router.get('/property', async (req, res) => {
         console.log(err)
         if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-        const property = dbRes.rows[0]
-        return res.status(200).send({ property })
+        return res.status(200).send({ status: 1, message: 'Properties found', results: dbRes.rows[0] })
     })
 })
 // Rent property
@@ -88,7 +87,7 @@ router.get('/property/rent', (req, res) => {
 //##    POST    ##
 // Create property
 router.post('/properties/create', (req, res) => {
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
         title,
@@ -100,6 +99,7 @@ router.post('/properties/create', (req, res) => {
         address,
         size,
         price,
+        image,
         ethernet = false,
         animals = false
     } = req.body
@@ -113,6 +113,7 @@ router.post('/properties/create', (req, res) => {
         || !address
         || !size
         || !price
+        || !image
         || ethernet === undefined
         || animals === undefined
         || familyFriendly === undefined
@@ -132,13 +133,13 @@ router.post('/properties/create', (req, res) => {
         '${ethernet}',
         '${animals}',
         '${familyFriendly}',
-        'coolio'
+        '${image}'
     );`
 
     client.query(query, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Error'})
-    
-        return res.status(200).send({status: 1, message: 'Property created'})
+        if (err) return res.status(500).send({ status: 0, message: 'Error' })
+
+        return res.status(200).send({ status: 1, message: 'Property created' })
     })
 })
 
@@ -243,17 +244,17 @@ router.delete('/property/:id', (req, res) => {
     // NEEDS TO DELETE IMAGES TOO
 
     const deleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
-    
+
     client.query(deleteImages, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
         client.query(deleteFacilities, (err, dbRes) => {
-            if(err) return res.status(500).send({status: 0, message: 'Server error'})
-            
-            client.query(deleteProperty, (err, dbRes) => {
-                if(err) return res.status(500).send({status: 0, message: 'Server error'})
+            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-                res.status(200).send({status: 1, message: 'Property deleted'})
+            client.query(deleteProperty, (err, dbRes) => {
+                if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
+                res.status(200).send({ status: 1, message: 'Property deleted' })
             })
         })
     })
