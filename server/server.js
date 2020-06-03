@@ -23,9 +23,11 @@ app.use(session({
 //##    Routes              ##
 const usersRoute = require("./routes/users.js")
 const propertiesRoute = require("./routes/properties.js")
+const propertyOwnersRoute = require("./routes/propertyOwners.js")
 const paymentsRoute = require("./routes/payments.js")
 app.use(usersRoute)
 app.use(propertiesRoute)
+app.use(propertyOwnersRoute)
 app.use(paymentsRoute)
 
 //##    Start server        ##

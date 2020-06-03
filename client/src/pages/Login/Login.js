@@ -10,13 +10,15 @@ import styles from "./Login.module.css";
 class Login extends Component {
   state = {
     email: '',
-    password: ''
+    password: '',
+    userType: 'guest'
   }
 
   handleSubmit = async event => {
     const {
       email,
-      password
+      password,
+      userType
     } = this.state
 
     event.preventDefault()
@@ -32,11 +34,10 @@ class Login extends Component {
       }),
       credentials: 'include'
     }
-
-    await fetch('http://localhost:8080/users/login', options)
+    await fetch(`http://localhost:8080/${userType === 'guest' ? 'users' : 'property-owners'}/login`, options)
       .then(res => res.json())
       .then(res => {
-        if(res.status !== 1) return
+        if(res.status !== 1) return console.log(res)
         this.props.updateAuth()
         this.props.history.push('/')
       })
@@ -64,6 +65,14 @@ class Login extends Component {
                 label="Password"
                 name="password"
               />
+              <select
+                className={styles.selectUserContainer}
+                name="userType"
+                onChange={event => this.setState({userType: event.target.value})}
+              >
+                <option value="guest">Guest</option>
+                <option value="property_owner">Property owner</option>
+              </select>
               <button className={styles.submitButton}>Login</button>
             </form>
           </div>

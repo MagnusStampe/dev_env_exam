@@ -88,7 +88,7 @@ class App extends Component {
             <Route exact path="/" component={props => <Home {...props} auth={auth} handleTravelChanges={this.onTravelChange} />} />
             <Route path="/search" component={props => <Search {...props} searchQueries={this.state.searchQueries} />} />
             <Route
-              path="/createproperty"
+              path="/create-property"
               component={props => <CreateProperty {...props} />}
             />
             <Route
@@ -99,7 +99,7 @@ class App extends Component {
             <Route path="/signup" component={props => <Signup {...props} updateAuth={authStatus} />} />
             <Route
               path="/profile"
-              component={props => <Profile {...props} />}
+              component={props => <Profile {...props} auth={auth} />}
             />
           </Switch>
         </div>
