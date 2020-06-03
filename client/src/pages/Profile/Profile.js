@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
+// Styles
 import styles from "./Profile.module.css";
-import HeaderMain from "../../components/header/HeaderMain";
 
 export default class Profile extends Component {
   render() {
@@ -10,7 +10,7 @@ export default class Profile extends Component {
       email: "eli@test.dk",
       password: "********",
       phoneNumber: "88888888",
-      phoneCode: "+(45)",
+      phoneCode: "45",
       countryCode: "3455",
       ibanCode: "1231 4322 5423 2311",
       expDate: "12/23",
@@ -18,13 +18,10 @@ export default class Profile extends Component {
     };
     return (
       <main>
-        <div className={styles.header}>
-          <HeaderMain />
-        </div>
         <div className={styles.mainContainer}>
           <div className={styles.container}>
             <h1 className={styles.title}>Profile</h1>
-            <div class={styles.userTitle}>
+            <div className={styles.userTitle}>
               {user.username}
             </div>
           </div>
@@ -52,17 +49,12 @@ export default class Profile extends Component {
                   </div>
                   <div>
                     <p>
-                      Phone number: {user.phoneNumber}
+                      Phone number: +({user.phoneCode}) {user.phoneNumber}
                     </p>
                   </div>
                   <div>
                     <p>
-                      Phone code: {user.phoneCode}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      Country code: {user.counntryCode}
+                      Country code: {user.countryCode}
                     </p>
                   </div>
                 </div>

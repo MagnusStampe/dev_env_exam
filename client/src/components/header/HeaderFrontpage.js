@@ -27,15 +27,23 @@ export default class HeaderMain extends Component {
               <Link to="/">LOGO</Link>
             </div>
           </div>
-          <div className={styles.menuContainer}>
-            <div className={styles.menuItem}>
-              <Link to="/login">Login</Link>
+          {!this.props.auth.loggedIn ? (
+            <div className={styles.menuContainer}>
+              <div className={styles.menuItem}>
+                <Link to="/login">Login</Link>
+              </div>
+              <div className={styles.menuItem}>
+                <Link to="/signup">Sign up</Link>
+              </div>
             </div>
-            <div className={styles.menuItem}>
-              <Link to="/signup">Sign up</Link>
+          ):(
+            <div className={styles.menuContainer}>
+              <div className={styles.menuItem}>
+                <Link to="/profile">Profile</Link>
+              </div>
             </div>
+          )}
           </div>
-        </div>
       </section>
     );
   }

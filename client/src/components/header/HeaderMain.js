@@ -48,6 +48,7 @@ export default class HeaderMain extends Component {
               </div>
             </form>
           </div>
+          {!this.props.auth.loggedIn ? (
           <div className={styles.menuContainer}>
             <div className={styles.menuItem}>
               <Link to="/login">Login</Link>
@@ -56,6 +57,13 @@ export default class HeaderMain extends Component {
               <Link to="/signup">Sign up</Link>
             </div>
           </div>
+          ):(
+            <div className={styles.menuContainer}>
+            <div className={styles.menuItem}>
+              <Link to="/profile">Profile</Link>
+            </div>
+          </div>
+          )}
         </div>
       </section>
     );

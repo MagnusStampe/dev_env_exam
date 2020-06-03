@@ -17,7 +17,7 @@ export default class Home extends Component {
     return (
       <main className={styles.pageContainer}>
         <section className={styles.textContainer}>
-          <HeaderFrontpage />
+          <HeaderFrontpage auth={this.props.auth} />
           <h2 className={styles.headline}>
             Your home in the holidays - <br />Start your search now.
           </h2>

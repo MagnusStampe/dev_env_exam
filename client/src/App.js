@@ -24,21 +24,60 @@ class App extends Component {
       checkIn: null,
       checkOut: null,
       guests: null
+    },
+    auth: {
+      loggedIn: false,
+      user: null
     }
   };
+
+  componentDidMount() {
+    this.authStatus();
+  }
+
+  authStatus = async () => {
+    const options = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }
+
+    await fetch('http://localhost:8080/users/session', options)
+      .then(res => res.json())
+      .then(res => res.status === 1
+        ? this.setState({auth: {
+          loggedIn: true,
+          user: res.user
+        }})
+        : this.setState({auth: {
+          loggedIn: false,
+          user: null
+        }})
+      )
+      .catch(error => console.log(error))
+  }
 
   onTravelInfoChange = searchQueries => {
     this.setState({ searchQueries });
   };
+
   render() {
-    console.log(this.props.location.pathname)
+    const {
+      onTravelInfoChange,
+      authStatus,
+      state: {
+        auth
+      }
+    } = this
     return (
       <Router>
         <div className="App">
-          {this.props.location.pathname !== "/" && <HeaderMain handleTravelInfoChange={this.onTravelInfoChange} />}
+          {this.props.location.pathname !== "/" && <HeaderMain handleTravelInfoChange={onTravelInfoChange} auth={auth} />}
 
           <Switch>
-            <Route exact path="/" component={props => <Home {...props} />} />
+            <Route exact path="/" component={props => <Home {...props} auth={auth} />} />
             <Route path="/search" component={props => <Search {...props} />} />
             <Route
               path="/createproperty"
@@ -48,8 +87,8 @@ class App extends Component {
               path="/property"
               component={props => <SingleView {...props} />}
             />
-            <Route path="/login" component={props => <Login {...props} />} />
-            <Route path="/signup" component={props => <Signup {...props} />} />
+            <Route path="/login" component={props => <Login {...props} updateAuth={authStatus} />} />
+            <Route path="/signup" component={props => <Signup {...props} updateAuth={authStatus} />} />
             <Route
               path="/profile"
               component={props => <Profile {...props} />}

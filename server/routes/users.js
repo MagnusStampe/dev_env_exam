@@ -10,16 +10,34 @@ const client = new Client({
     port: dbCredentials.port,
 })
 
+client.connect()
+
 //##    GET     ##
-// User session
 
 // Log out
-router.get("/users/logout", (req, res) => {
+router.get('/users/logout', (req, res) => {
     req.session.destroy();
     res.status(200).send({status: 1, message: 'Logged out'})
-});
+})
 
 //##    POST    ##
+// User session
+router.post('/users/session', (req, res) => {
+    if(!req.session.userID) return res.status(200).send({status: 0, message: 'Not logged in'})
+
+    return res.status(200).send(
+        {
+            status: 1,
+            message: 'Logged in',
+            user: {
+                userID: req.session.userID,
+                username: req.session.username,
+                email: req.session.username
+            }
+        }
+    )
+})
+
 // Create user
 router.post('/users/create', (req,res) => {
     if(!req.query) return res.status(404).send({status: 0, message: 'No parameters provided'})
@@ -48,6 +66,9 @@ router.post('/users/create', (req,res) => {
         || !expirationDate
     ) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
 
+    if(CVV.length !== 3) return res.status(404).send({status: 0, message: 'CVV must be exactly 3 characters'})
+    if(expirationDate.length !== 4) return res.status(404).send({status: 0, message: 'Exp date must be exactly 4 characters'})
+
     const query = `CALL procedurecreateuser(
         '${username}',
         '${password}',
@@ -60,10 +81,9 @@ router.post('/users/create', (req,res) => {
         '${expirationDate}'
     );`
 
-    client.connect()
     client.query(query, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Error'})
-        client.end()
+        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+
         return res.status(200).send({status: 1, message: 'User created'})
     })
 })
@@ -75,17 +95,16 @@ router.post('/users/login', (req,res) => {
     const {
        email,
        password
-    } = req.headers
+    } = req.body
 
     if(!email || !password) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
 
     const query = `
-        SELECT tUser."nUserID", tUser."cUsername", tUser."cPassword"
+        SELECT tUser."nUserID", tUser."cUsername", tUser."cPassword", tUser."cEmail"
         FROM tUser
         WHERE tUser."cEmail" = '${email}';
     `
 
-    client.connect()
     client.query(query, (err, dbRes) => {
         if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
@@ -94,10 +113,10 @@ router.post('/users/login', (req,res) => {
 
         const hour = 1000 * 60 * 60;
         req.session.username = dbRes.rows[0].cUsername;
-        req.session.userID = dbRes.rows[0].nUserID
+        req.session.userID = dbRes.rows[0].nUserID;
+        req.session.email = dbRes.rows[0].cEmail;
         req.session.cookie.maxAge = hour;
 
-        client.end()
         return res.status(200).send({
                 status: 1,
                 message: 'Authentication successful',

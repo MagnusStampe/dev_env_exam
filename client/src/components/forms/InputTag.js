@@ -11,8 +11,16 @@ export default class InputTag extends Component {
 
   render() {
     const {
-      props: { label, name, name2, type, onChange },
-      state: { inputID }
+      props: {
+        label,
+        name,
+        name2,
+        type,
+        onChange
+      },
+      state: {
+        inputID
+      }
     } = this;
 
     const containerClasses = classnames(

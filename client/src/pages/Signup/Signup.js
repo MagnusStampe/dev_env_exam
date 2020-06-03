@@ -1,9 +1,13 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
-import styles from "./Signup.module.css";
+// Components
 import InputTag from "../../components/forms/InputTag";
 
-export default class Signup extends Component {
+// Styles
+import styles from "./Signup.module.css";
+
+class Signup extends Component {
   state = {
     username: "",
     email: "",
@@ -14,13 +18,14 @@ export default class Signup extends Component {
     ibanCode: "",
     cvv: "",
     expDate: "",
-    userType: "guest"
+    userType: "guest",
+    message: ''
   };
+
   handleInputChange = event => {
     this.setState({
       [event.target.name]: event.target.value
     });
-    console.log(this.state.user);
   };
 
   onFormSubmit = async event => {
@@ -38,9 +43,7 @@ export default class Signup extends Component {
       userType
     } = this.state;
 
-    console.log(this.state);
-
-    await fetch("http://localhost:8080/users/create", {
+    const options = {
       method: "POST",
       credentials: "include",
       headers: {
@@ -58,22 +61,49 @@ export default class Signup extends Component {
         expirationDate: expDate,
         userType: userType
       })
-    })
-      .then(res => {
-        res.json();
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    }
+
+    await fetch("http://localhost:8080/users/create", options)
+      .then(res => res.json())
+      .then(res => res.status === 1
+        ? this.login(email, password, options)
+        : this.setState({message: res.message})
+      )
+      .catch(err => err.message
+        ? this.setState({message: err.message})
+        : this.setState({message: 'Error'})
+      )
   };
 
+  login = async (email, password, options) => {
+    await fetch('http://localhost:8080/users/login', options)
+      .then(res => res.json())
+      .then(res => {
+        this.props.updateAuth()
+        this.props.history.push('/')
+      })
+      .catch(err => err.message
+        ? this.setState({message: err.message})
+        : this.setState({message: 'Error'})
+      )
+  }
+
   render() {
+    const {
+      state: {
+        message
+      },
+      handleInputChange,
+      onFormSubmit
+    } = this
+
     return (
       <main className={styles.mainContainer}>
         <div className={styles.container}>
           <h1 className={styles.title}>Sign up</h1>
+          {message && <p>{message}</p>}
           <div className={styles.formContainer}>
-            <form className={styles.form} onSubmit={this.onFormSubmit}>
+            <form className={styles.form} onSubmit={onFormSubmit}>
               <div className={styles.wrapper}>
                 <div className={styles.wrapperContainer}>
                   <div className={styles.inputContainer}>
@@ -84,19 +114,19 @@ export default class Signup extends Component {
                       type="text"
                       label="Username"
                       name="username"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="email"
                       label="E-mail"
                       name="email"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="password"
                       label="Password"
                       name="password"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="text"
@@ -107,19 +137,19 @@ export default class Signup extends Component {
                       type="text"
                       label="Phone number"
                       name="phoneNumber"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="text"
                       label="Phone code"
                       name="phoneCode"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="text"
                       label="Country code"
                       name="countryCode"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
@@ -133,24 +163,24 @@ export default class Signup extends Component {
                       type="number"
                       label="IBAN code"
                       name="ibanCode"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="number"
                       label="CVV"
                       name="cvv"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <InputTag
                       type="text"
                       label="Exp Date"
                       name="expDate"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     />
                     <select
                       className={styles.selectUserContainer}
                       name="userType"
-                      onChange={this.handleInputChange}
+                      onChange={handleInputChange}
                     >
                       <option value="guest">Guest</option>
                       <option value="property_owner">Property owner</option>
@@ -168,3 +198,5 @@ export default class Signup extends Component {
     );
   }
 }
+
+export default withRouter(Signup)
