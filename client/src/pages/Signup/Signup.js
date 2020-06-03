@@ -67,11 +67,11 @@ class Signup extends Component {
       .then(res => res.json())
       .then(res => res.status === 1
         ? this.login(email, password, options)
-        : this.setState({message: res.message})
+        : this.setState({ message: res.message })
       )
       .catch(err => err.message
-        ? this.setState({message: err.message})
-        : this.setState({message: 'Error'})
+        ? this.setState({ message: err.message })
+        : this.setState({ message: 'Error' })
       )
   };
 
@@ -83,8 +83,8 @@ class Signup extends Component {
         this.props.history.push('/')
       })
       .catch(err => err.message
-        ? this.setState({message: err.message})
-        : this.setState({message: 'Error'})
+        ? this.setState({ message: err.message })
+        : this.setState({ message: 'Error' })
       )
   }
 
@@ -129,7 +129,7 @@ class Signup extends Component {
                       onChange={handleInputChange}
                     />
                     <InputTag
-                      type="text"
+                      type="password"
                       label="Repeat password"
                       name="repeatPassword"
                     />
