@@ -1,7 +1,7 @@
 .inputContainer {
   box-shadow: 0px 0px 6px #55555580;
-  border-radius: 10px;
-  height: 60px;
+  border-radius: 0.5em;
+  height: 4em;
   padding: 8px 16px;
   background-color: #ffffff;
 }
@@ -20,22 +20,27 @@
 }
 
 .inputContainer.tall .input {
-  min-height: 160px;
+  min-height: 90%;
+  overflow: scroll;
 }
 
 .label {
   display: block;
   color: #135f6d;
-  font-size: 16px;
+  font-size: 1em;
   margin: 0;
   margin-bottom: 4px;
 }
 
 .input {
-  font-size: 24px;
+  font-size: 1.5em;
   color: #000;
   margin: 0;
   padding: 0;
   border: 0;
   width: 100%;
+}
+
+.logoContainer {
+  width: 300px;
 }

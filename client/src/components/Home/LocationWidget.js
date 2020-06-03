@@ -3,6 +3,8 @@ import {
     Link
 } from 'react-router-dom'
 
+import { FaArrowRight } from 'react-icons/fa'
+
 // Styles
 import styles from './LocationWidget.module.css'
 
@@ -13,7 +15,7 @@ export default class LocationWidget extends Component {
                 <div className={styles.left}>
                     <p className={styles.label}>Check out available properties in</p>
                     <h2 className={styles.header}>Copenhagen</h2>
-                    <button className={styles.button}>PIL</button>
+                    <button className={styles.button}><FaArrowRight className={styles.arrow} /></button>
                     <Link to="/search" className={styles.link}>Search for other cities…</Link>
                 </div>
                 <div className={styles.right}>
