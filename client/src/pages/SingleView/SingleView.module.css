@@ -118,4 +118,9 @@ p {
   background-color: #ffffff;
   color: #135f6d;
   font-size: 24px;
+  border: none;
+}
+
+.bookingInfo p {
+  color: #ffffff;
 }

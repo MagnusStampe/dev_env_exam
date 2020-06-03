@@ -14,7 +14,9 @@ export default class Search extends Component {
             .catch(error => console.log(error))
     }
 
+
     render() {
+        console.log(this.props.searchQueries);
         const property = {
             title: 'Hus',
             body: [

@@ -45,8 +45,6 @@ export default class SingleView extends Component {
   };
 
   render() {
-    console.log("yeet " + this.state.checkIn);
-    console.log("reeet " + this.state.checkOut);
 
     const property = {
       owner: "Elias Marco Lip FK",
@@ -69,9 +67,6 @@ export default class SingleView extends Component {
 
     return (
       <main className={styles.mainContainer}>
-        <div>
-          <HeaderMain />
-        </div>
         <section className={styles.sectionContainer}>
           <div className={styles.wrapper}>
             <div className={styles.container}>
@@ -200,11 +195,9 @@ export default class SingleView extends Component {
                   </form>
                   <div className={styles.bookingInfo}>
                     <div className={styles.bookingWrapper}>
-                      <div className={styles.bookingContainer}>
-                        <p>
-                          {this.calculateDays()}
-                        </p>
-                      </div>
+                      <p>
+                        {this.calculateDays()}
+                      </p>
                     </div>
                   </div>
                 </div>
