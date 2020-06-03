@@ -21,16 +21,16 @@ export default class PropertyCard extends Component {
                 <div className={styles.content}>
                     <h3 className={styles.headline}>{title}</h3>
                     <div className={styles.body}>
-                        {body ? (
+                        {Array.isArray(body) ? (
                             body.map((paragraph, index) => (
                                 <p key={index}>{paragraph}</p>
                             ))
                         ) : (
-                                <p>No description provided</p>
+                            <p>{body}</p>
                             )}
                         <div className={styles.bodyFadeOut} />
                     </div>
-                    <div className={styles.price}>{cost + currency + ' / ' + timeFormat}</div>
+                    {cost && currency && timeFormat && <div className={styles.price}>{cost + currency + ' / ' + timeFormat}</div>}
                 </div>
             </div>
         )

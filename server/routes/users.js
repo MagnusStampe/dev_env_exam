@@ -23,7 +23,6 @@ router.get('/users/logout', (req, res) => {
 //##    POST    ##
 // User session
 router.post('/users/session', (req, res) => {
-    console.log(req.session)
     if(!req.session.userID) return res.status(200).send({status: 0, message: 'Not logged in'})
 
     return res.status(200).send(
@@ -42,7 +41,6 @@ router.post('/users/session', (req, res) => {
 
 // User information
 router.post('/users/information', (req, res) => {
-    console.log(req.session);
     if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
 
     const query = `

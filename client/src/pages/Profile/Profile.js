@@ -23,7 +23,6 @@ export default class Profile extends Component {
       },
       credentials: 'include'
     }
-    console.log(this.props.auth)
     if(!this.props.auth.loggedIn) return;
     await fetch(`http://localhost:8080/${this.props.auth.user.userType === 'propertyOwner' ? 'property-owners' : 'users'}/information`,options)
       .then(res => res.json())
@@ -77,7 +76,7 @@ export default class Profile extends Component {
             </div>
             {auth.user.userType === 'propertyOwner' ? (
             <div className={styles.container}>
-              <ProfileProperties properties={user.properties} />
+              <ProfileProperties properties={user.properties} updateProperties={this.getUser} />
             </div>
             ) : null}
           </div>

@@ -5,6 +5,7 @@ import InputTag from "../../components/forms/InputTag";
 
 export default class CreateProperty extends Component {
   state = {
+    propertyID: null,
     propertyType: '',
     title: '',
     description: '',
@@ -19,11 +20,22 @@ export default class CreateProperty extends Component {
     animals: false
   }
 
+  componentDidMount() {
+      this.getUser()
+  }
+
+  getUser = () => {
+    var url_string = "http://www.example.com/t.html?a=1&b=3&c=m2-m3-m4-m5"; //window.location.href
+    var url = new URL(url_string);
+    var c = url.searchParams.get("c");
+    console.log(c);
+  }
+
   handleSubmit = async event => {
     event.preventDefault();
 
     const options = {
-      method: 'POST',
+      method: 'PUT',
       headers: {
           'Content-Type': 'application/json'
       },
@@ -31,7 +43,7 @@ export default class CreateProperty extends Component {
       credentials: 'include'
     };
 
-    await fetch('http://localhost:8080/properties/create', options)
+    await fetch('http://localhost:8080/properties/update', options)
       .then(res => res.json())
       .then(res => console.log(res))
       .catch(err => console.log(err))
@@ -83,7 +95,7 @@ export default class CreateProperty extends Component {
                     />
                     <div className={styles.submitContainer}>
                       <button className={styles.submitButton}>
-                        Create property
+                        Update property
                       </button>
                     </div>
                   </div>

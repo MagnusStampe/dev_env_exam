@@ -64,10 +64,11 @@ router.get('/property/rent', (req, res) => {
 //##    POST    ##
 // Create property
 router.post('/properties/create', (req, res) => {
-    console.log(req.body)
     if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
 
     const {
+        title,
+        description,
         propertyType,
         zipCode,
         cityName,
@@ -95,6 +96,8 @@ router.post('/properties/create', (req, res) => {
         
     const query = `CALL procedurecreateproperty(
         '${req.session.userID}',
+        '${title}',
+        '${description}',
         '${propertyType}',
         '${zipCode}',
         '${cityName}',
@@ -109,7 +112,6 @@ router.post('/properties/create', (req, res) => {
     );`
 
     client.query(query, (err, dbRes) => {
-        console.log(err)
         if(err) return res.status(500).send({status: 0, message: 'Error'})
     
         return res.status(200).send({status: 1, message: 'Property created'})
@@ -157,15 +159,19 @@ router.patch('/property/update', (req, res) => {
     if(res.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
 
     const {
-        propertyid: propertyID,
-        newprice: newPrice,
-        familyfriendly: familyFriendly,
+        propertyID,
+        title,
+        description,
+        newPrice,
+        familyFriendly,
         ethernet,
         animals
-    } = req.headers
+    } = req.body
 
     if(
         !propertyID
+        || !title
+        || !description
         || !newPrice
         || !familyFriendly
         || !ethernet
@@ -195,29 +201,32 @@ router.patch('/property/update', (req, res) => {
     })
 })
 
-
 //##    DELETE  ##
 // Delete property
 router.delete('/property/:id', (req,res) => {
     if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
-
     const propertyID = req.params.id;
 
-    if(!!propertyID) return res.status(404).send({status: 0, message: 'No property ID given'})
+    if(!propertyID) return res.status(404).send({status: 0, message: 'No property ID given'})
 
     const deleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
+    const deleteImages = `DELETE FROM tPropertyImage WHERE "nPropertyID" = '${propertyID}';`
     // NEEDS TO DELETE IMAGES TOO
  
     const deleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
     
  
-    client.query(deleteFacilities, (err, dbRes) => {
+    client.query(deleteImages, (err, dbRes) => {
         if(err) return res.status(500).send({status: 0, message: 'Server error'})
-        
-        client.query(deleteProperty, (err, dbRes) => {
-            if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
-            res.status(200).send({status: 1, message: 'Property deleted'})
+        client.query(deleteFacilities, (err, dbRes) => {
+            if(err) return res.status(500).send({status: 0, message: 'Server error'})
+            
+            client.query(deleteProperty, (err, dbRes) => {
+                if(err) return res.status(500).send({status: 0, message: 'Server error'})
+
+                res.status(200).send({status: 1, message: 'Property deleted'})
+            })
         })
     })
 })

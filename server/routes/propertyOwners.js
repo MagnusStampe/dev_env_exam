@@ -61,20 +61,17 @@ router.post('/property-owners/information', (req, res) => {
     `
 
     client.query(query, (err, dbRes) => {
-        console.log(err)
         if(err) return res.status(500).send({status: 0, message: 'Server error'})
         if(!dbRes.rows[0]) return res.status(404).send({status: 0, message: 'User not found'})
         
         const propertyQuery = `
-        SELECT tProperty.*
-        FROM tPropertyOwner
-        JOIN tProperty
-        ON tPropertyOwner."nPropertyOwnerID" = '${req.session.userID}'
+            SELECT tProperty.*
+            FROM tPropertyOwner
+            JOIN tProperty ON tPropertyOwner."nPropertyOwnerID" = '${req.session.userID}'
         `
         const result = dbRes.rows[0]
         
         client.query(propertyQuery, (err,dbRes) => {
-            console.log(err)
             if(err) return res.status(500).send({status: 0, message: 'Server error'})
             if(!dbRes.rows[0]) return res.status(200).send({status: 1, message: 'User found', user: {
                 username: result.cUsername,
@@ -87,8 +84,6 @@ router.post('/property-owners/information', (req, res) => {
                 CVV: result.cCVV,
                 expDate: result.cExpirationDate
             }})
-
-            console.log(dbRes.rows)
 
             return res.status(200).send({status: 1, message: 'User found', user: {
                 username: result.cUsername,
@@ -121,10 +116,8 @@ router.delete('/property-owner/:id', (req, res) => {
         const propertyIDs = properties.rows
 
         if(!propertyID)
-        console.log(propertyIDs)
 
         propertyIDs.map((ID) => {
-            console.log(ID.nPropertyID)
             const propertyID = ID.nPropertyID
             const queryDeleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
             // DELETE IMAGES
