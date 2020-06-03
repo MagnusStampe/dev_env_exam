@@ -15,21 +15,21 @@ client.connect();
 //##    GET     ##
 // Rent property
 router.get('/property/rent', (req, res) => {
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
         userid: userID,
         propertyid: propertyID,
-        startdate:  startDate,
+        startdate: startDate,
         enddate: endDate
     } = req.params
 
-    if(
+    if (
         !userID
         || !propertyID
         || !startDate
         || !endDate
-    ) return res.status(404).send({status: 0, message: 'Insuffient parameters provided'})
+    ) return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
 
     const queryFindPrice = `
         SELECT nPrice FROM tProperty
@@ -37,10 +37,10 @@ router.get('/property/rent', (req, res) => {
     `
 
     client.query(queryFindPrice, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
-        
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
         const rentCost = dbRes.rows[0].nPrice
-        
+
         const queryProcedure = `
         CALL procedurecreaterentdeal(
             '${userID}', 
@@ -52,10 +52,10 @@ router.get('/property/rent', (req, res) => {
         `
 
         client.query(queryProcedure, (err, dbRes) => {
-            if(err) return res.status(500).send({status: 0, message: 'Server error'})
-            
+            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
             const result = test.row
-            return res.status(200).send({status: 0, message: 'Property rented successfully'})
+            return res.status(200).send({ status: 0, message: 'Property rented successfully' })
         })
     })
 })
@@ -65,7 +65,7 @@ router.get('/property/rent', (req, res) => {
 // Create property
 router.post('/properties/create', (req, res) => {
     console.log(req.body)
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
         propertyType,
@@ -80,8 +80,8 @@ router.post('/properties/create', (req, res) => {
     } = req.body
 
     const houseSize = 9;
-    
-    if(
+
+    if (
         !propertyType
         || !zipCode
         || !cityName
@@ -91,8 +91,8 @@ router.post('/properties/create', (req, res) => {
         || ethernet === undefined
         || animals === undefined
         || familyFriendly === undefined
-    ) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
-        
+    ) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
+
     const query = `CALL procedurecreateproperty(
         '${req.session.userID}',
         '${propertyType}',
@@ -110,21 +110,19 @@ router.post('/properties/create', (req, res) => {
 
     client.query(query, (err, dbRes) => {
         console.log(err)
-        if(err) return res.status(500).send({status: 0, message: 'Error'})
-    
-        return res.status(200).send({status: 1, message: 'Property created'})
+        if (err) return res.status(500).send({ status: 0, message: 'Error' })
+
+        return res.status(200).send({ status: 1, message: 'Property created' })
     })
 })
 
 // Search properties
-router.get('/properties', async(req, res) => {
+router.get('/properties', async (req, res) => {
     const {
         startDate,
         endDate
     } = req.query
-
-    if(!startDate || !endDate) return res.status(404).send({status: 0, message: 'Dates not provided'})
-
+    if (!startDate || !endDate) return res.status(404).send({ status: 0, message: 'Dates not provided' })
     query = `
         SELECT tRented."nRentID", tProperty."nPropertyID", tRented."dStart", tRented."dEnd"
         FROM tRented
@@ -143,9 +141,9 @@ router.get('/properties', async(req, res) => {
         ORDER BY tProperty."nPropertyID"
     `
     client.query(query, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
-        
-        return res.status(200).send({status: 1, message: 'Properties found', results: dbRes.rows})
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
+        return res.status(200).send({ status: 1, message: 'Properties found', results: dbRes.rows })
     })
 })
 
@@ -154,7 +152,7 @@ router.get('/properties', async(req, res) => {
 //##    PATCH   ##
 // Update property
 router.patch('/property/update', (req, res) => {
-    if(res.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+    if (res.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
         propertyid: propertyID,
@@ -164,13 +162,13 @@ router.patch('/property/update', (req, res) => {
         animals
     } = req.headers
 
-    if(
+    if (
         !propertyID
         || !newPrice
         || !familyFriendly
         || !ethernet
         || !animals
-    ) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
+    ) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
 
     const updateProperty = `
         UPDATE tproperty
@@ -185,12 +183,12 @@ router.patch('/property/update', (req, res) => {
     `
 
     client.query(updateProperty, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
         client.query(updateFacilities, (err, dbRes) => {
-            if(err) return res.status(500).send({status: 0, message: 'Server error'})
+            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-            return res.status(200).send({status: 0, message: 'Success'})
+            return res.status(200).send({ status: 0, message: 'Success' })
         })
     })
 })
@@ -198,26 +196,26 @@ router.patch('/property/update', (req, res) => {
 
 //##    DELETE  ##
 // Delete property
-router.delete('/property/:id', (req,res) => {
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+router.delete('/property/:id', (req, res) => {
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const propertyID = req.params.id;
 
-    if(!!propertyID) return res.status(404).send({status: 0, message: 'No property ID given'})
+    if (!!propertyID) return res.status(404).send({ status: 0, message: 'No property ID given' })
 
     const deleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
     // NEEDS TO DELETE IMAGES TOO
- 
-    const deleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
-    
- 
-    client.query(deleteFacilities, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
-        
-        client.query(deleteProperty, (err, dbRes) => {
-            if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
-            res.status(200).send({status: 1, message: 'Property deleted'})
+    const deleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
+
+
+    client.query(deleteFacilities, (err, dbRes) => {
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
+        client.query(deleteProperty, (err, dbRes) => {
+            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
+            res.status(200).send({ status: 1, message: 'Property deleted' })
         })
     })
 })

@@ -7,37 +7,56 @@ import PropertyCard from './../../components/Property/PropertyCard'
 import styles from './Search.module.css'
 
 export default class Search extends Component {
+    state = {
+        isLoading: true,
+        data: ""
+    }
+
     async componentDidMount() {
-        await fetch('http://localhost:8080/properties?startDate=2030-11-11&endDate=2030-11-14')
+        const { checkIn, checkOut } = this.props.searchQueries;
+        console.log(checkIn);
+        console.log(checkOut);
+        if (!checkIn || !checkOut) return
+        await fetch(`http://localhost:8080/properties?startDate=${checkIn}&endDate=${checkOut}`)
             .then(res => res.json())
-            .then(res => console.log(res))
+            .then(res => {
+                this.setState({ data: res, isLoading: false })
+                console.log(res);
+
+            })
             .catch(error => console.log(error))
+
+
     }
 
 
     render() {
-        console.log(this.props.searchQueries);
-        const property = {
-            title: 'Hus',
-            body: [
-                'Cozy apartment in the middle of Copenhagen, perfect camp fora couple of days in this amazing city.',
-                'Give your self a special treatment in luxury and modern surroundings'
-            ],
-            cost: '130',
-            currency: '$',
-            timeFormat: 'day'
-        }
+        const { isLoading, data } = this.state;
+        // console.log(this.props.searchQueries);
+        // const property = {
+        //     title: 'Hus',
+        //     body: [
+        //         'Cozy apartment in the middle of Copenhagen, perfect camp fora couple of days in this amazing city.',
+        //         'Give your self a special treatment in luxury and modern surroundings'
+        //     ],
+        //     cost: '130',
+        //     currency: '$',
+        //     timeFormat: 'day'
+        // }
 
         return (
             <main className={styles.searchContainer}>
                 <h1 className={styles.headline}>Our available properties in Copenhagen:</h1>
                 <section className={styles.propertiesContainer}>
-                    <PropertyCard data={property} />
-                    <PropertyCard data={property} />
-                    <PropertyCard data={property} />
-                    <PropertyCard data={property} />
-                    <PropertyCard data={property} />
-                    <PropertyCard data={property} />
+                    {isLoading
+                        ? <div>Loading</div>
+                        : data.results.map((property, key) => {
+                            console.log(property);
+                            return (
+                                <PropertyCard key={key} data={property} />
+                            )
+                        })
+                    }
                 </section>
                 <button className={styles.loadMoreButton}>Load more...</button>
             </main>
