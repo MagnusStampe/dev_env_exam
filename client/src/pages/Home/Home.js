@@ -47,7 +47,7 @@ class Home extends Component {
     return (
       <main className={styles.pageContainer}>
         <section className={styles.textContainer}>
-          <HeaderFrontpage auth={this.props.auth} />
+          <HeaderFrontpage auth={this.props.auth} updateAuth={this.props.updateAuth} />
           <h2 className={styles.headline}>
             Your home in the holidays - <br />Start your search now.
           </h2>

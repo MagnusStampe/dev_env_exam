@@ -1,11 +1,33 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import styles from "./HeaderFrontpage.module.css";
 
-export default class HeaderMain extends Component {
+class HeaderMain extends Component {
   state = {
   };
+
+
+
+  logOut = async () => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }
+
+    await fetch("http://localhost:8080/users/logout", options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.status !== 1) return console.log(res)
+        this.props.updateAuth()
+        this.props.history.push("/")
+      })
+      .catch(error => console.log(error))
+  }
 
   render() {
     const image = "/images/ss_logo.png"
@@ -37,6 +59,11 @@ export default class HeaderMain extends Component {
                   <div className={styles.menuItem}>
                     <Link to="/profile">Profile</Link>
                   </div>
+                  <div className={styles.menuItem}>
+                    <button onClick={this.logOut}>
+                      Logout
+                    </button>
+                  </div>
                 </div>
               )
           }
@@ -45,3 +72,5 @@ export default class HeaderMain extends Component {
     );
   }
 }
+
+export default withRouter(HeaderMain)

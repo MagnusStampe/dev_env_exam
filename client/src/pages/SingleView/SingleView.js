@@ -1,19 +1,41 @@
 import React, { Component } from "react";
+import { withRouter } from 'react-router-dom'
 
 // Styles
 import styles from "./SingleView.module.css";
 import InputTag from "../../components/forms/InputTag";
-import HeaderMain from "../../components/header/HeaderMain";
 
-export default class SingleView extends Component {
+class SingleView extends Component {
   state = {
     checkIn: null,
     checkOut: null,
     days: null,
     dailyPrice: 300,
     guests: null,
-    loggedIn: false
+    loggedIn: false,
+
+    data: null,
+    isLoading: true
   };
+
+  componentDidMount = async () => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString)
+    const id = urlParams.get('id')
+    console.log(id)
+
+    await fetch(`http://localhost:8080/property?id=${id}`)
+      .then(res => res.json())
+      .then(res => {
+        this.setState({ data: res, isLoading: false })
+        console.log(res);
+
+      })
+      .catch(error => console.log(error))
+
+
+  }
+
 
   handleInputChange = event => {
     this.setState({
@@ -44,7 +66,17 @@ export default class SingleView extends Component {
     return `${dailyPrice} X ${days} day(s) = ${totalPrice}`;
   };
 
+
   render() {
+    console.log(this.props.location.data)
+    // const {
+    //   title,
+    //   body,
+    //   cost,
+    //   currency,
+    //   timeFormat,
+    //   nPropertyID
+    // } = this.props.location.data
 
     const property = {
       owner: "Elias Marco Lip FK",
@@ -209,3 +241,6 @@ export default class SingleView extends Component {
     );
   }
 }
+
+
+export default withRouter(SingleView);

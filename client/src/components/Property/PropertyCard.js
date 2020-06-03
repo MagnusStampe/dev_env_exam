@@ -1,19 +1,30 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom'
 
 // Styles
 import styles from './PropertyCard.module.css'
 
-export default class PropertyCard extends Component {
+class PropertyCard extends Component {
+
+    seeProperty = (id) => {
+        // await fetch(`http://localhost:8080/property?id=${id}`)
+        //     .then(res => res.json())
+        //     .then(res => {
+        this.props.history.push({
+            pathname: "/property",
+            search: `?id=${id}`
+        })
+    }
     render() {
         const {
-            data: {
-                title,
-                body,
-                cost,
-                currency,
-                timeFormat
-            }
-        } = this.props
+            title,
+            body,
+            cost,
+            currency,
+            timeFormat,
+            nPropertyID
+
+        } = this.props.data
 
         return (
             <div className={styles.container}>
@@ -26,7 +37,10 @@ export default class PropertyCard extends Component {
                                 <p key={index}>{paragraph}</p>
                             ))
                         ) : (
-                                <p>No description provided</p>
+                                <div>
+                                    <button onClick={() => this.seeProperty(nPropertyID)}>View</button>
+                                    <p>Nso description provided</p>
+                                </div>
                             )}
                         <div className={styles.bodyFadeOut} />
                     </div>
@@ -36,3 +50,5 @@ export default class PropertyCard extends Component {
         )
     }
 }
+
+export default withRouter(PropertyCard);

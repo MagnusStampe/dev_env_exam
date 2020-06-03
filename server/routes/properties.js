@@ -13,6 +13,30 @@ const client = new Client({
 client.connect();
 
 //##    GET     ##
+
+// Show single property
+router.get('/property', async (req, res) => {
+    const { id: id } = req.query;
+
+    query = `
+        SELECT *
+        FROM tProperty
+        JOIN tFacility
+        ON tProperty."nPropertyID" = tFacility."nPropertyID"
+        JOIN tPropertyImage
+        ON tProperty."nPropertyID" = tPropertyImage."nPropertyID"
+        JOIN tPropertyType
+        ON tProperty."nTypeID" = tPropertyType."nTypeID"
+        WHERE tProperty."nPropertyID" = '${id}'
+    `
+    await client.query(query, (err, dbRes) => {
+        console.log(err)
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
+        const property = dbRes.rows[0]
+        return res.status(200).send({ property })
+    })
+})
 // Rent property
 router.get('/property/rent', (req, res) => {
     if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
@@ -124,10 +148,16 @@ router.get('/properties', async (req, res) => {
     } = req.query
     if (!startDate || !endDate) return res.status(404).send({ status: 0, message: 'Dates not provided' })
     query = `
-        SELECT tRented."nRentID", tProperty."nPropertyID", tRented."dStart", tRented."dEnd"
+        SELECT tProperty.* , tPropertyType.*, tFacility.*
         FROM tRented
         FULL JOIN tProperty
         ON tRented."nPropertyID" = tProperty."nPropertyID"
+        JOIN tPropertyType 
+        on tProperty."nPropertyID" = tPropertyType."nTypeID"
+        JOIN tFacility 
+        ON tProperty."nPropertyID" = tFacility."nPropertyID"
+        JOIN tCity
+        ON tProperty."nCityID" = tCity."nCityID"
         WHERE '${startDate}' < tRented."dStart"
         OR '${endDate}' > tRented."dEnd"
         OR NOT EXISTS (
