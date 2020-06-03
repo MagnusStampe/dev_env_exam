@@ -101,6 +101,43 @@ router.post('/property-owners/information', (req, res) => {
     })
 })
 
+//##    PATCH    ##
+// Update user
+router.patch('/property-owners', (req, res) => {
+    if(!req.session.userID) return res.status(404).send({ status: 0, message: 'Already logged in' })
+
+    const {
+        username,
+        email,
+        password
+    } = req.body
+
+    if(
+        !username
+        || !email
+    ) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
+
+
+    const query =`
+        UPDATE tPropertyOwner 
+        SET "cUsername" = '${username}', "cEmail" = '${email}'
+        WHERE "nPropertyOwnerID" = '${req.session.userID}'
+    `
+    const queryWithPassword =`
+        UPDATE tPropertyOwner 
+        SET "cUsername" = '${username}', "cEmail" = '${email}', "cPassword" = '${password}'
+        WHERE "nPropertyOwnerID" = '${req.session.userID}'
+    `
+
+    client.query(password ? queryWithPassword : query, (err, dbRes) => {
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
+        req.session.email = email
+        req.session.username = username
+
+        return res.status(200).send({status: 1, message: 'User updated'})
+    })
+})
 
 //##    DELETE  ##
 router.delete('/property-owner/:id', (req, res) => {

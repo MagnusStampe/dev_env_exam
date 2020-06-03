@@ -16,6 +16,8 @@ import Signup from "./pages/Signup/Signup";
 import Profile from "./pages/Profile/Profile";
 import SingleView from "./pages/SingleView/SingleView";
 import CreateProperty from "./pages/CreateProperty/CreateProperty";
+import UpdateProperty from "./pages/UpdateProperty/UpdateProperty";
+import UpdateUser from "./pages/UpdateUser/UpdateUser";
 
 class App extends Component {
   state = {
@@ -90,6 +92,14 @@ class App extends Component {
             <Route
               path="/create-property"
               component={props => <CreateProperty {...props} />}
+            />
+            <Route
+              path="/update-property"
+              component={props => <UpdateProperty {...props} />}
+            />
+            <Route
+              path="/update-profile"
+              component={props => <UpdateUser {...props} auth={auth} updateAuth={authStatus} />}
             />
             <Route
               path="/property"

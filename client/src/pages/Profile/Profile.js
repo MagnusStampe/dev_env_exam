@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom'
 
 // Components
 import ProfileProperties from './../../components/ProfileProperties/ProfileProperties';
@@ -64,6 +65,7 @@ export default class Profile extends Component {
                   <p>Phone number: +({user.phoneCode}) {user.phoneNumber}</p>
                   <p>Country code: {user.countryCode}</p>
                 </div>
+                <Link to="/update-profile">Update profile</Link>
               </div>
 
               <div className={styles.wrapperContainer}>

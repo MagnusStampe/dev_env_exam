@@ -22,14 +22,11 @@ class SingleView extends Component {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString)
     const id = urlParams.get('id')
-    console.log(id)
 
     await fetch(`http://localhost:8080/property?id=${id}`)
       .then(res => res.json())
       .then(res => {
         this.setState({ data: res, isLoading: false })
-        console.log(res);
-
       })
       .catch(error => console.log(error))
 
@@ -44,16 +41,23 @@ class SingleView extends Component {
   };
 
   calculateDays = () => {
-    const { checkIn, checkOut, days } = this.state;
-    console.log(checkIn);
-    if (checkIn && checkOut) {
-      const getCheckIn = new Date(`${checkIn}`);
-      const getCheckOut = new Date(`${checkOut}`);
+    const {
+      state: {
+        days
+      }
+    } = this;
+
+    const searchQueries = {}
+
+    if (searchQueries.checkIn && searchQueries.checkOut) {
+      const getCheckIn = new Date(`${searchQueries.checkIn}`);
+      const getCheckOut = new Date(`${searchQueries.checkOut}`);
+
       const differenceInTime = getCheckOut.getTime() - getCheckIn.getTime();
       const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-      if (differenceInDays !== days) {
-        this.setState({ days: differenceInDays });
-      }
+
+      if (differenceInDays !== days) this.setState({ days: differenceInDays });
+      
       return this.calculateTotalPrice();
     }
   };
@@ -63,28 +67,17 @@ class SingleView extends Component {
 
     const totalPrice = dailyPrice * days;
 
-    return `${dailyPrice} X ${days} day(s) = ${totalPrice}`;
+    return `${dailyPrice}$ X ${days} day(s) = ${totalPrice}$`;
   };
 
 
   render() {
-    console.log(this.props.location.data)
-    // const {
-    //   title,
-    //   body,
-    //   cost,
-    //   currency,
-    //   timeFormat,
-    //   nPropertyID
-    // } = this.props.location.data
-
     const property = {
       owner: "Elias Marco Lip FK",
       type: "House FK",
       city: "Copenhagen FK",
       title: "yeet house",
-      body:
-        "This is a house blablablalbla - more houseoes hsouehsouehoseuhosuehs",
+      body: "This is a house blablablalbla - more houseoes hsouehsouehoseuhosuehs",
       address: "Somegade 24",
       size: 4,
       houseSize: 200,
@@ -196,9 +189,7 @@ class SingleView extends Component {
               <div className={styles.bookingContainer}>
                 <div className={styles.bookingTitle}>
                   <h2>Booking</h2>
-                  <h3>
-                    {property.price + property.currency} / night
-                  </h3>
+                  <h3>{property.price + property.currency} / night {this.calculateDays()}</h3>
                 </div>
                 <div className={styles.formContainer}>
                   <form className={styles.form}>

@@ -16,7 +16,9 @@ export default class InputTag extends Component {
         name,
         name2,
         type,
-        onChange
+        onChange,
+        value,
+        checked
       },
       state: {
         inputID
@@ -38,6 +40,8 @@ export default class InputTag extends Component {
           type={type}
           id={inputID}
           name={name}
+          value={value}
+          checked={checked}
           onChange={event => (onChange ? onChange(event) : null)}
         />
         {name2 &&

@@ -16,7 +16,7 @@ client.connect();
 
 // Show single property
 router.get('/property', async (req, res) => {
-    const { id: id } = req.query;
+    const { id } = req.query;
 
     query = `
         SELECT *
@@ -34,27 +34,32 @@ router.get('/property', async (req, res) => {
         if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
         const property = dbRes.rows[0]
-        return res.status(200).send({ property })
+        return res.status(200).send({ status: 1, message: 'Property found', property: property })
     })
 })
+
 // Rent property
-router.get('/property/rent', (req, res) => {
+router.post('/property/rent', (req, res) => {
     if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
-        userid: userID,
-        propertyid: propertyID,
-        startdate: startDate,
-        enddate: endDate
-    } = req.params
+        userID,
+        propertyID,
+        startDate,
+        endDate,
+        userType
+    } = req.body
 
     if (
         !userID
         || !propertyID
         || !startDate
         || !endDate
+        || !userType
     ) return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
-
+    
+    if(userType !== 'user') return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
+    
     const queryFindPrice = `
         SELECT nPrice FROM tProperty
         WHERE nPropertyID = '${propertyID}'
@@ -183,16 +188,16 @@ router.get('/properties', async (req, res) => {
 
 //##    PATCH   ##
 // Update property
-router.patch('/property/update', (req, res) => {
-    if (res.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
+router.patch('/property', (req, res) => {
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
         propertyID,
         title,
         description,
-        newPrice,
+        price,
         familyFriendly,
-        ethernet,
+        wifi,
         animals
     } = req.body
 
@@ -200,31 +205,30 @@ router.patch('/property/update', (req, res) => {
         !propertyID
         || !title
         || !description
-        || !newPrice
-        || !familyFriendly
-        || !ethernet
-        || !animals
+        || price === undefined
+        || familyFriendly === undefined
+        || wifi === undefined
+        || animals === undefined
     ) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
 
     const updateProperty = `
-        UPDATE tproperty
-        SET "nPrice" = '${inputPriceNew}'
+        UPDATE tProperty
+        SET "nPrice" = '${price}', "cTitle" = '${title}', "cDescription" = '${description}'
         WHERE "nPropertyID" = '${propertyID}';
     `
 
     const updateFacilities = `
         UPDATE tFacility
-        SET "bEthernet" = '${inputbooleanethernet}', "bAnimals" = '${inputbooleananimals}', "bFamilyFriendly" = '${inputbooleanfamilyfriendly}'
+        SET "bEthernet" = '${wifi}', "bAnimals" = '${animals}', "bFamilyFriendly" = '${familyFriendly}'
         WHERE "nPropertyID" = '${propertyID}';
     `
 
     client.query(updateProperty, (err, dbRes) => {
         if (err) return res.status(500).send({ status: 0, message: 'Server error' })
-
+        
         client.query(updateFacilities, (err, dbRes) => {
             if (err) return res.status(500).send({ status: 0, message: 'Server error' })
-
-            return res.status(200).send({ status: 0, message: 'Success' })
+            return res.status(200).send({ status: 1, message: 'Success' })
         })
     })
 })

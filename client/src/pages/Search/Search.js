@@ -14,8 +14,6 @@ export default class Search extends Component {
 
     async componentDidMount() {
         const { checkIn, checkOut } = this.props.searchQueries;
-        console.log(checkIn);
-        console.log(checkOut);
         if (!checkIn || !checkOut) return
         await fetch(`http://localhost:8080/properties?startDate=${checkIn}&endDate=${checkOut}`)
             .then(res => res.json())
@@ -32,17 +30,6 @@ export default class Search extends Component {
 
     render() {
         const { isLoading, data } = this.state;
-        // console.log(this.props.searchQueries);
-        // const property = {
-        //     title: 'Hus',
-        //     body: [
-        //         'Cozy apartment in the middle of Copenhagen, perfect camp fora couple of days in this amazing city.',
-        //         'Give your self a special treatment in luxury and modern surroundings'
-        //     ],
-        //     cost: '130',
-        //     currency: '$',
-        //     timeFormat: 'day'
-        // }
 
         return (
             <main className={styles.searchContainer}>
@@ -53,7 +40,7 @@ export default class Search extends Component {
                         : data.results.map((property, key) => {
                             console.log(property);
                             return (
-                                <PropertyCard key={key} data={property} />
+                                <PropertyCard key={key} data={property} searchQueries={this.props.searchQueries} />
                             )
                         })
                     }

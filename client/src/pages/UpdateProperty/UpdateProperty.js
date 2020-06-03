@@ -1,22 +1,17 @@
 import React, { Component } from "react";
+import { withRouter } from 'react-router-dom';
 
-import styles from "./CreateProperty.module.css";
+import styles from "./UpdateProperty.module.css";
 import InputTag from "../../components/forms/InputTag";
 
-export default class CreateProperty extends Component {
+class UpdateProperty extends Component {
   state = {
     propertyID: null,
-    propertyType: '',
     title: '',
     description: '',
-    zipCode: '',
-    cityName: '',
-    familyFriendly: false,
-    houseSize: '',
-    address: '',
-    size: '',
     price: '',
-    ethernet: false,
+    familyFriendly: false,
+    wifi: false,
     animals: false
   }
 
@@ -24,18 +19,31 @@ export default class CreateProperty extends Component {
       this.getUser()
   }
 
-  getUser = () => {
-    var url_string = "http://www.example.com/t.html?a=1&b=3&c=m2-m3-m4-m5"; //window.location.href
-    var url = new URL(url_string);
-    var c = url.searchParams.get("c");
-    console.log(c);
+  getUser = async () => {
+    const url = new URL('http://placeholder.com' + this.props.location.search);
+    const propertyID = url.searchParams.get('id');
+    
+    await fetch(`http://localhost:8080/property?id=${propertyID}`)
+        .then(res => res.json())
+        .then(res => {
+            this.setState({
+                propertyID,
+                title: res.property.cTitle,
+                description: res.property.cDescription,
+                price: res.property.nPrice,
+                wifi: res.property.bEthernet,
+                animals: res.property.bAnimals,
+                familyFriendly: res.property.bFamilyFriendly
+            })
+        })
+        .catch(err => console.log(err))
   }
 
   handleSubmit = async event => {
     event.preventDefault();
 
     const options = {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
           'Content-Type': 'application/json'
       },
@@ -43,7 +51,7 @@ export default class CreateProperty extends Component {
       credentials: 'include'
     };
 
-    await fetch('http://localhost:8080/properties/update', options)
+    await fetch('http://localhost:8080/property', options)
       .then(res => res.json())
       .then(res => console.log(res))
       .catch(err => console.log(err))
@@ -53,18 +61,16 @@ export default class CreateProperty extends Component {
     const {    
       title,
       description,
-      propertyType,
-      zipCode,
-      cityName,
-      address,
-      size,
       price,
+      wifi,
+      animals,
+      familyFriendly
     } = this.state;
 
     return (
       <main className={styles.mainContainer}>
         <div className={styles.container}>
-          <h1 className={styles.title}>Create Property</h1>
+          <h1 className={styles.title}>Update Property</h1>
           <div className={styles.formContainer}>
             <form className={styles.form} onSubmit={this.handleSubmit}>
               <div className={styles.wrapper}>
@@ -73,11 +79,6 @@ export default class CreateProperty extends Component {
                     <div className={styles.subTitle} />
                     <InputTag type="text" value={title} label="Title" name="title" onChange={event => this.setState({title: event.target.value})} />
                     <InputTag type="text" value={description} label="Description" name="description" onChange={event => this.setState({description: event.target.value})} />
-                    <InputTag type="text" value={propertyType} label="Type" name="type" onChange={event => this.setState({propertyType: event.target.value})} />
-                    <InputTag type="text" value={zipCode} label="Zipcode" name="zipcode" onChange={event => this.setState({zipCode: event.target.value})} />
-                    <InputTag type="text" value={cityName} label="City" name="city" onChange={event => this.setState({cityName: event.target.value})} />
-                    <InputTag type="text" value={address} label="Address" name="address" onChange={event => this.setState({address: event.target.value})} />
-                    <InputTag type="number" value={size} label="Property size" name="size" onChange={event => this.setState({size: event.target.value})} />
                     <InputTag type="number" value={price} label="Price" name="price" onChange={event => this.setState({price: event.target.value})} />
                   </div>
                 </div>
@@ -85,14 +86,9 @@ export default class CreateProperty extends Component {
                 <div className={styles.wrapperContainer}>
                   <div className={styles.inputContainer}>
                     <div className={styles.subTitle} />
-                    <InputTag type="checkbox" label="Wifi" name="wifi" onChange={event => this.setState({ethernet: event.target.checked})} />
-                    <InputTag type="checkbox" label="Animals" name="animals" onChange={event => this.setState({animals: event.target.checked})} />
-                    <InputTag
-                      type="checkbox"
-                      label="Family Friendly"
-                      name="family"
-                      onChange={event => this.setState({familyFriendly: event.target.checked})}
-                    />
+                    <InputTag type="checkbox" checked={wifi ? true : false} label="Wifi" name="wifi" onChange={event => this.setState({wifi: event.target.checked})} />
+                    <InputTag type="checkbox" checked={animals ? true : false} label="Animals" name="animals" onChange={event => this.setState({animals: event.target.checked})} />
+                    <InputTag type="checkbox" checked={familyFriendly ? true : false} label="Family Friendly"  name="family" onChange={event => this.setState({familyFriendly: event.target.checked})} />
                     <div className={styles.submitContainer}>
                       <button className={styles.submitButton}>
                         Update property
@@ -108,3 +104,5 @@ export default class CreateProperty extends Component {
     );
   }
 }
+
+export default withRouter(UpdateProperty);
