@@ -23,6 +23,7 @@ router.get('/users/logout', (req, res) => {
 //##    POST    ##
 // User session
 router.post('/users/session', (req, res) => {
+    console.log(req.session)
     if(!req.session.userID) return res.status(200).send({status: 0, message: 'Not logged in'})
 
     return res.status(200).send(
@@ -32,10 +33,46 @@ router.post('/users/session', (req, res) => {
             user: {
                 userID: req.session.userID,
                 username: req.session.username,
-                email: req.session.username
+                email: req.session.email,
+                userType:  req.session.userType
             }
         }
     )
+})
+
+// User information
+router.post('/users/information', (req, res) => {
+    console.log(req.session);
+    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+
+    const query = `
+        SELECT * 
+        FROM tUser 
+        JOIN tcreditcard ON tUser."nUserID" = tCreditcard."nUserID"
+        JOIN tPhoneCode ON tUser."nPhoneCodeID" = tPhonecode."nPhoneCodeID" 
+        JOIN tCountryCode ON tUser."nCountryCodeID" = tCountryCode."nCountryCodeID" 
+        WHERE tUser."cEmail" = '${req.session.email}'
+    `
+
+    client.query(query, (err, dbRes) => {
+
+        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+        if(!dbRes.rows[0]) return res.status(404).send({status: 0, message: 'User not found'})
+
+        const result = dbRes.rows[0]
+
+        return res.status(200).send({status: 1, message: 'User found', user: {
+            username: result.cUsername,
+            email: result.cEmail,
+            phoneCode: result.cPhoneCode,
+            phoneNumber: result.cPhoneNumber,
+            countryCode: result.cCountryCode,
+            phoneNumber: result.cPhoneNumber,
+            IBAN: result.cIBANcode,
+            CVV: result.cCVV,
+            expDate: result.cExpirationDate
+        }})
+    })
 })
 
 // Create user
@@ -115,6 +152,7 @@ router.post('/users/login', (req,res) => {
         req.session.username = dbRes.rows[0].cUsername;
         req.session.userID = dbRes.rows[0].nUserID;
         req.session.email = dbRes.rows[0].cEmail;
+        req.session.userType = 'user';
         req.session.cookie.maxAge = hour;
 
         return res.status(200).send({

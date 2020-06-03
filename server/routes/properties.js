@@ -64,20 +64,22 @@ router.get('/property/rent', (req, res) => {
 //##    POST    ##
 // Create property
 router.post('/properties/create', (req, res) => {
+    console.log(req.body)
     if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
 
     const {
-        propertytype: propertyType,
-        zipcode: zipCode,
-        cityname: cityName,
-        familyfriendly: familyFriendly,
-        housesize: houseSize,
+        propertyType,
+        zipCode,
+        cityName,
+        familyFriendly = false,
         address,
         size,
         price,
-        ethernet,
-        animals
+        ethernet = false,
+        animals = false
     } = req.body
+
+    const houseSize = 9;
     
     if(
         !propertyType
@@ -85,32 +87,32 @@ router.post('/properties/create', (req, res) => {
         || !cityName
         || !address
         || !size
-        || !houseSize
         || !price
-        || !ethernet
-        || !animals
-        || !familyFriendly
+        || ethernet === undefined
+        || animals === undefined
+        || familyFriendly === undefined
     ) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
         
     const query = `CALL procedurecreateproperty(
+        '${req.session.userID}',
         '${propertyType}',
         '${zipCode}',
         '${cityName}',
-        '${req.session.userID}',
         '${address}',
         '${size}',
         '${houseSize}',
         '${price}',
         '${ethernet}',
         '${animals}',
-        '${familyFriendly}'
+        '${familyFriendly}',
+        'coolio'
     );`
 
     client.query(query, (err, dbRes) => {
         console.log(err)
         if(err) return res.status(500).send({status: 0, message: 'Error'})
     
-        return res.status(200).send({status: 1, message: 'User created'})
+        return res.status(200).send({status: 1, message: 'Property created'})
     })
 })
 

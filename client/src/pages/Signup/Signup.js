@@ -58,15 +58,14 @@ class Signup extends Component {
         countryCode: countryCode,
         IBAN: ibanCode,
         CVV: cvv,
-        expirationDate: expDate,
-        userType: userType
+        expirationDate: expDate
       })
     }
 
-    await fetch("http://localhost:8080/users/create", options)
+    await fetch(`http://localhost:8080/${userType === 'guest' ?  'users' : 'property-owners'}/create`, options)
       .then(res => res.json())
       .then(res => res.status === 1
-        ? this.login(email, password, options)
+        ? this.login(options)
         : this.setState({message: res.message})
       )
       .catch(err => err.message
@@ -75,10 +74,11 @@ class Signup extends Component {
       )
   };
 
-  login = async (email, password, options) => {
-    await fetch('http://localhost:8080/users/login', options)
+  login = async (options) => {
+    await fetch(`http://localhost:8080/${this.state.userType === 'guest' ?  'users' : 'property-owners'}/login`, options)
       .then(res => res.json())
       .then(res => {
+        if(res.status !== 1) return
         this.props.updateAuth()
         this.props.history.push('/')
       })

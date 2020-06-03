@@ -1,21 +1,51 @@
 import React, { Component } from "react";
 
+// Components
+import ProfileProperties from './../../components/ProfileProperties/ProfileProperties';
+
 // Styles
 import styles from "./Profile.module.css";
 
 export default class Profile extends Component {
+  state = {
+    user: {}
+  }
+
+  componentDidMount() {
+    this.getUser()
+  }
+
+  getUser = async () => {
+    const options = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }
+    console.log(this.props.auth)
+    if(!this.props.auth.loggedIn) return;
+    await fetch(`http://localhost:8080/${this.props.auth.user.userType === 'propertyOwner' ? 'property-owners' : 'users'}/information`,options)
+      .then(res => res.json())
+      .then(res => {
+        if(res.status !== 1) return;
+        this.setState({user: res.user})
+      })
+      .catch(err => console.log(err))
+  }
+
   render() {
-    const user = {
-      username: "Elias Marco Lip",
-      email: "eli@test.dk",
-      password: "********",
-      phoneNumber: "88888888",
-      phoneCode: "45",
-      countryCode: "3455",
-      ibanCode: "1231 4322 5423 2311",
-      expDate: "12/23",
-      cvv: "522"
-    };
+    const {
+      props: {
+        auth
+      },
+      state: {
+        user
+      }
+    } = this;
+    
+    if(!user || !auth.user) return null
+
     return (
       <main>
         <div className={styles.mainContainer}>
@@ -29,53 +59,27 @@ export default class Profile extends Component {
             <div className={styles.wrapper}>
               <div className={styles.wrapperContainer}>
                 <div className={styles.wrapperContent}>
-                  <div className={styles.wrapperTitle}>
-                    <h2>User information:</h2>
-                  </div>
-                  <div>
-                    <p>
-                      Username: {user.username}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      E-mail: {user.email}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      Password: {user.password}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      Phone number: +({user.phoneCode}) {user.phoneNumber}
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      Country code: {user.countryCode}
-                    </p>
-                  </div>
+                  <h2 className={styles.title}>User information:</h2>
+                  <p>Username: {user.username}</p>
+                  <p>E-mail: {user.email}</p>
+                  <p>Phone number: +({user.phoneCode}) {user.phoneNumber}</p>
+                  <p>Country code: {user.countryCode}</p>
                 </div>
               </div>
 
               <div className={styles.wrapperContainer}>
                 <div className={styles.wrapperContent}>
-                  <div className={styles.wrapperTitle}>
-                    <h2>Creditcard:</h2>
-                  </div>
-                  <div>
-                    <p>
-                      IBAN code: {user.ibanCode}
-                    </p>
-                  </div>
-                  <div>
+                    <h2 className={styles.title}>Creditcard:</h2>
+                    <p>IBAN code: {user.IBAN}</p>
                     <p>Change card</p>
-                  </div>
                 </div>
               </div>
             </div>
+            {auth.user.userType === 'propertyOwner' ? (
+            <div className={styles.container}>
+              <ProfileProperties properties={user.properties} />
+            </div>
+            ) : null}
           </div>
         </div>
       </main>
