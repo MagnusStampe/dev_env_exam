@@ -27,6 +27,26 @@ export default class HeaderMain extends Component {
     this.props.history.push("/search")
   }
 
+  logOut = async () => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }
+
+    await fetch("http://localhost:8080/users/logout", options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.status !== 1) return console.log(res)
+        this.props.updateAuth()
+        this.props.history.push("/")
+      })
+      .catch(error => console.log(error))
+  }
+
   render() {
     const image = "/images/ss_logo.png"
     return (
@@ -73,6 +93,11 @@ export default class HeaderMain extends Component {
                 <div className={styles.menuContainer}>
                   <div className={styles.menuItem}>
                     <Link to="/profile">Profile</Link>
+                  </div>
+                  <div className={styles.menuItem}>
+                    <button onClick={this.logOut}>
+                      Logout
+                    </button>
                   </div>
                 </div>
               )

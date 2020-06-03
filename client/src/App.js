@@ -81,11 +81,11 @@ class App extends Component {
           {/* {this.props.location.pathname !== "/" && <HeaderMain handleTravelInfoChange={onTravelInfoChange} auth={auth} />} */}
           <Switch>
             <Route exact path="/" component={null} />
-            <Route path="/" component={props => <HeaderMain {...props} auth={auth} handleTravelChanges={this.onTravelChange} />} />
+            <Route path="/" component={props => <HeaderMain {...props} auth={auth} handleTravelChanges={this.onTravelChange} updateAuth={authStatus} />} />
           </Switch>
 
           <Switch>
-            <Route exact path="/" component={props => <Home {...props} auth={auth} handleTravelChanges={this.onTravelChange} />} />
+            <Route exact path="/" component={props => <Home {...props} auth={auth} handleTravelChanges={this.onTravelChange} updateAuth={authStatus} />} />
             <Route path="/search" component={props => <Search {...props} searchQueries={this.state.searchQueries} />} />
             <Route
               path="/create-property"
@@ -101,6 +101,10 @@ class App extends Component {
               path="/profile"
               component={props => <Profile {...props} auth={auth} />}
             />
+
+
+
+
           </Switch>
         </div>
       </Router>
