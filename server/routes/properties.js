@@ -88,12 +88,7 @@ router.get('/property/rent', (req, res) => {
 //##    POST    ##
 // Create property
 router.post('/properties/create', (req, res) => {
-<<<<<<< HEAD
     if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
-=======
-    console.log(req.body)
-    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
->>>>>>> 97da31d086a43476bad82fd40b5a55262a84cc82
 
     const {
         title,
@@ -141,16 +136,9 @@ router.post('/properties/create', (req, res) => {
     );`
 
     client.query(query, (err, dbRes) => {
-<<<<<<< HEAD
         if(err) return res.status(500).send({status: 0, message: 'Error'})
     
         return res.status(200).send({status: 1, message: 'Property created'})
-=======
-        console.log(err)
-        if (err) return res.status(500).send({ status: 0, message: 'Error' })
-
-        return res.status(200).send({ status: 1, message: 'Property created' })
->>>>>>> 97da31d086a43476bad82fd40b5a55262a84cc82
     })
 })
 
@@ -243,29 +231,19 @@ router.patch('/property/update', (req, res) => {
 
 //##    DELETE  ##
 // Delete property
-<<<<<<< HEAD
-router.delete('/property/:id', (req,res) => {
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
-    const propertyID = req.params.id;
-
-    if(!propertyID) return res.status(404).send({status: 0, message: 'No property ID given'})
-=======
 router.delete('/property/:id', (req, res) => {
     if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const propertyID = req.params.id;
 
     if (!!propertyID) return res.status(404).send({ status: 0, message: 'No property ID given' })
->>>>>>> 97da31d086a43476bad82fd40b5a55262a84cc82
 
     const deleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
     const deleteImages = `DELETE FROM tPropertyImage WHERE "nPropertyID" = '${propertyID}';`
     // NEEDS TO DELETE IMAGES TOO
 
     const deleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
-<<<<<<< HEAD
     
- 
     client.query(deleteImages, (err, dbRes) => {
         if(err) return res.status(500).send({status: 0, message: 'Server error'})
 
@@ -277,17 +255,6 @@ router.delete('/property/:id', (req, res) => {
 
                 res.status(200).send({status: 1, message: 'Property deleted'})
             })
-=======
-
-
-    client.query(deleteFacilities, (err, dbRes) => {
-        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
-
-        client.query(deleteProperty, (err, dbRes) => {
-            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
-
-            res.status(200).send({ status: 1, message: 'Property deleted' })
->>>>>>> 97da31d086a43476bad82fd40b5a55262a84cc82
         })
     })
 })
