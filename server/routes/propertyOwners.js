@@ -13,7 +13,7 @@ client.connect()
 
 //##    POST    ##
 // Create property owner
-router.post('/property-owners/create', (req,res) => {
+router.post('/property-owners/create', (req, res) => {
     const {
         username,
         password,
@@ -23,14 +23,14 @@ router.post('/property-owners/create', (req,res) => {
         countryCode
     } = req.body
 
-    if(
+    if (
         !username
         || !password
         || !email
         || !phoneNumber
         || !phoneCode
         || !countryCode
-    ) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
+    ) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
 
     const query = `CALL procedureInsertPropertyOwner(
         '${username}', 
@@ -40,17 +40,17 @@ router.post('/property-owners/create', (req,res) => {
         '${phoneCode}', 
         '${countryCode}'
     )`
- 
+
     client.query(query, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Error'})
- 
-        return res.status(200).send({status: 1, message: 'User created'})
+        if (err) return res.status(500).send({ status: 0, message: 'Error' })
+
+        return res.status(200).send({ status: 1, message: 'User created' })
     })
 })
 
 // Property owner information
 router.post('/property-owners/information', (req, res) => {
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const query = `
         SELECT * 
@@ -61,42 +61,46 @@ router.post('/property-owners/information', (req, res) => {
     `
 
     client.query(query, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
-        if(!dbRes.rows[0]) return res.status(404).send({status: 0, message: 'User not found'})
-        
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+        if (!dbRes.rows[0]) return res.status(404).send({ status: 0, message: 'User not found' })
+
         const propertyQuery = `
             SELECT tProperty.*
             FROM tPropertyOwner
             JOIN tProperty ON tPropertyOwner."nPropertyOwnerID" = '${req.session.userID}'
         `
         const result = dbRes.rows[0]
-        
-        client.query(propertyQuery, (err,dbRes) => {
-            if(err) return res.status(500).send({status: 0, message: 'Server error'})
-            if(!dbRes.rows[0]) return res.status(200).send({status: 1, message: 'User found', user: {
-                username: result.cUsername,
-                email: result.cEmail,
-                phoneCode: result.cPhoneCode,
-                phoneNumber: result.cPhoneNumber,
-                countryCode: result.cCountryCode,
-                phoneNumber: result.cPhoneNumber,
-                IBAN: result.cIBANcode,
-                CVV: result.cCVV,
-                expDate: result.cExpirationDate
-            }})
 
-            return res.status(200).send({status: 1, message: 'User found', user: {
-                username: result.cUsername,
-                email: result.cEmail,
-                phoneCode: result.cPhoneCode,
-                phoneNumber: result.cPhoneNumber,
-                countryCode: result.cCountryCode,
-                phoneNumber: result.cPhoneNumber,
-                IBAN: result.cIBANcode,
-                CVV: result.cCVV,
-                expDate: result.cExpirationDate,
-                properties: dbRes.rows
-            }})
+        client.query(propertyQuery, (err, dbRes) => {
+            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+            if (!dbRes.rows[0]) return res.status(200).send({
+                status: 1, message: 'User found', user: {
+                    username: result.cUsername,
+                    email: result.cEmail,
+                    phoneCode: result.cPhoneCode,
+                    phoneNumber: result.cPhoneNumber,
+                    countryCode: result.cCountryCode,
+                    phoneNumber: result.cPhoneNumber,
+                    IBAN: result.cIBANcode,
+                    CVV: result.cCVV,
+                    expDate: result.cExpirationDate
+                }
+            })
+
+            return res.status(200).send({
+                status: 1, message: 'User found', user: {
+                    username: result.cUsername,
+                    email: result.cEmail,
+                    phoneCode: result.cPhoneCode,
+                    phoneNumber: result.cPhoneNumber,
+                    countryCode: result.cCountryCode,
+                    phoneNumber: result.cPhoneNumber,
+                    IBAN: result.cIBANcode,
+                    CVV: result.cCVV,
+                    expDate: result.cExpirationDate,
+                    properties: dbRes.rows
+                }
+            })
         })
     })
 })
@@ -146,47 +150,47 @@ router.delete('/property-owner/:id', (req, res) => {
     const findProperties = `
         SELECT "nPropertyID" from tProperty WHERE "nPropertyOwnerID" = '${propertyOwnerID}'
     `
- 
+
     client.query(findProperties, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
-        
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+
         const propertyIDs = properties.rows
 
-        if(!propertyID)
+        if (!propertyID)
 
-        propertyIDs.map((ID) => {
-            const propertyID = ID.nPropertyID
-            const queryDeleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
-            // DELETE IMAGES
-            const queryDeleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
+            propertyIDs.map((ID) => {
+                const propertyID = ID.nPropertyID
+                const queryDeleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
+                // DELETE IMAGES
+                const queryDeleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
 
-            client.query(queryDeleteFacilities, (err, dbRes) => {
-                if(err) return res.status(500).send({status: 0, message: 'Server error'})
+                client.query(queryDeleteFacilities, (err, dbRes) => {
+                    if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-                client.query(queryDeleteProperty, (err, dbRes) => {
-                    if(err)  return res.status(500).send({status: 0, message: 'Server error'})
+                    client.query(queryDeleteProperty, (err, dbRes) => {
+                        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-                    const queryDeletePropertyOwner = `DELETE FROM tPropertyOwner WHERE "nPropertyOwnerID" = '${propertyOwnerID}'`  
-                    client.query(queryDeletePropertyOwner, (err, dbRes) => {
-                        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+                        const queryDeletePropertyOwner = `DELETE FROM tPropertyOwner WHERE "nPropertyOwnerID" = '${propertyOwnerID}'`
+                        client.query(queryDeletePropertyOwner, (err, dbRes) => {
+                            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-                        return res.status(200).send({status: 1, message: propertyID + ' successfully deleted'})
+                            return res.status(200).send({ status: 1, message: propertyID + ' successfully deleted' })
+                        })
                     })
                 })
             })
-        })
     })
 })
 
 // Login
-router.post('/property-owners/login', (req,res) => {
-    if(req.session.userID) return res.status(404).send({status: 0, message: 'Already logged in'})
+router.post('/property-owners/login', (req, res) => {
+    if (req.session.userID) return res.status(404).send({ status: 0, message: 'Already logged in' })
     const {
-       email,
-       password
+        email,
+        password
     } = req.body
 
-    if(!email || !password) return res.status(404).send({status: 0, message: 'Insufficient parameters provided'})
+    if (!email || !password) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
 
     const query = `
         SELECT tPropertyOwner."nPropertyOwnerID", tPropertyOwner."cUsername", tPropertyOwner."cPassword", tPropertyOwner."cEmail"
@@ -194,10 +198,10 @@ router.post('/property-owners/login', (req,res) => {
         WHERE tPropertyOwner."cEmail" = '${email}';
     `
     client.query(query, (err, dbRes) => {
-        if(err) return res.status(500).send({status: 0, message: 'Server error'})
+        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-        if(!dbRes.rows[0]) return res.status(404).send({status: 0, message: 'Incorrect email or password'})
-        if(dbRes.rows[0].cPassword !== password) return res.status(404).send({status: 0, message: 'Incorrect email or password'})
+        if (!dbRes.rows[0]) return res.status(404).send({ status: 0, message: 'Incorrect email or password' })
+        if (dbRes.rows[0].cPassword !== password) return res.status(404).send({ status: 0, message: 'Incorrect email or password' })
 
         const hour = 1000 * 60 * 60;
         req.session.username = dbRes.rows[0].cUsername;
@@ -207,13 +211,13 @@ router.post('/property-owners/login', (req,res) => {
         req.session.cookie.maxAge = hour;
 
         return res.status(200).send({
-                status: 1,
-                message: 'Authentication successful',
-                user: {
-                    userID: req.session.userID, 
-                    username: req.session.username
-                }
+            status: 1,
+            message: 'Authentication successful',
+            user: {
+                userID: req.session.userID,
+                username: req.session.username
             }
+        }
         )
     })
 })

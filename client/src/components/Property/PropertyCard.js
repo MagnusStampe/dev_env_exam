@@ -7,9 +7,6 @@ import styles from './PropertyCard.module.css'
 class PropertyCard extends Component {
 
     seeProperty = (id) => {
-        // await fetch(`http://localhost:8080/property?id=${id}`)
-        //     .then(res => res.json())
-        //     .then(res => {
         this.props.history.push({
             pathname: "/property",
             search: `?id=${id}`
@@ -17,34 +14,28 @@ class PropertyCard extends Component {
     }
     render() {
         const {
-            title,
-            body,
-            cost,
-            currency,
-            timeFormat,
+            cTitle,
+            cDescription,
+            nPrice,
+            cHouseSize,
+            nSize,
             nPropertyID
-
         } = this.props.data
+
+        console.log(this.props.data)
 
         return (
             <div className={styles.container}>
                 <div className={styles.propertyImage} />
                 <div className={styles.content}>
-                    <h3 className={styles.headline}>{title}</h3>
+                    <h3 className={styles.headline}>{cTitle}</h3>
                     <div className={styles.body}>
-                        {Array.isArray(body) ? (
-                            body.map((paragraph, index) => (
-                                <p key={index}>{paragraph}</p>
-                            ))
-                        ) : (
-                            <div>
-                                <button onClick={() => this.seeProperty(nPropertyID)}>View</button>
-                                <p>{body}</p>
-                            </div>
-                        )}
+                        <div>
+                            <button onClick={() => this.seeProperty(nPropertyID)}>View</button>
+                            <p>{cDescription}</p>
+                        </div>
                         <div className={styles.bodyFadeOut} />
                     </div>
-                    {cost && currency && timeFormat && <div className={styles.price}>{cost + currency + ' / ' + timeFormat}</div>}
                 </div>
             </div>
         )

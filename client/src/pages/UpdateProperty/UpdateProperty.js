@@ -16,7 +16,7 @@ class UpdateProperty extends Component {
   }
 
   componentDidMount() {
-      this.getUser()
+    this.getUser()
   }
 
   getUser = async () => {
@@ -45,7 +45,7 @@ class UpdateProperty extends Component {
     const options = {
       method: 'PATCH',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(this.state),
       credentials: 'include'
@@ -58,13 +58,14 @@ class UpdateProperty extends Component {
   }
 
   render() {
-    const {    
+    const {
       title,
       description,
       price,
       wifi,
       animals,
-      familyFriendly
+      familyFriendly,
+      image
     } = this.state;
 
     return (
@@ -77,18 +78,19 @@ class UpdateProperty extends Component {
                 <div className={styles.wrapperContainer}>
                   <div className={styles.inputContainer}>
                     <div className={styles.subTitle} />
-                    <InputTag type="text" value={title} label="Title" name="title" onChange={event => this.setState({title: event.target.value})} />
-                    <InputTag type="text" value={description} label="Description" name="description" onChange={event => this.setState({description: event.target.value})} />
-                    <InputTag type="number" value={price} label="Price" name="price" onChange={event => this.setState({price: event.target.value})} />
+                    <InputTag type="text" value={title} label="Title" name="title" onChange={event => this.setState({ title: event.target.value })} />
+                    <InputTag type="text" value={description} label="Description" name="description" onChange={event => this.setState({ description: event.target.value })} />
+                    <InputTag type="number" value={price} label="Price" name="price" onChange={event => this.setState({ price: event.target.value })} />
+                    <InputTag type="text" value={image} label="Image url" name="image" onChange={event => this.setState({ image: event.target.value })} />
                   </div>
                 </div>
 
                 <div className={styles.wrapperContainer}>
                   <div className={styles.inputContainer}>
                     <div className={styles.subTitle} />
-                    <InputTag type="checkbox" checked={wifi ? true : false} label="Wifi" name="wifi" onChange={event => this.setState({wifi: event.target.checked})} />
-                    <InputTag type="checkbox" checked={animals ? true : false} label="Animals" name="animals" onChange={event => this.setState({animals: event.target.checked})} />
-                    <InputTag type="checkbox" checked={familyFriendly ? true : false} label="Family Friendly"  name="family" onChange={event => this.setState({familyFriendly: event.target.checked})} />
+                    <InputTag type="checkbox" checked={wifi} label="Wifi" name="wifi" onChange={event => this.setState({ ethernet: event.target.checked })} />
+                    <InputTag type="checkbox" checked={animals} label="Animals" name="animals" onChange={event => this.setState({ animals: event.target.checked })} />
+                    <InputTag type="checkbox" checked={familyFriendly} label="Family Friendly" name="family" onChange={event => this.setState({ familyFriendly: event.target.checked })}/>
                     <div className={styles.submitContainer}>
                       <button className={styles.submitButton}>
                         Update property

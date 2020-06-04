@@ -11,6 +11,7 @@ h2 {
   color: #135f6d;
 }
 
+
 p {
   font-size: 25px;
   color: #555555;
@@ -27,6 +28,10 @@ p {
 .container {
   width: 50%;
   height: 80vh;
+}
+
+.infoContainer {
+  width: 50%;
 }
 
 .containerPadding {
@@ -62,7 +67,8 @@ p {
   margin-right: 5px;
 }
 
-.widgetValue p {
+.widgetValue p, .widgetIcon {
+  font-size: 24px;
   color: #ffffff;
 }
 

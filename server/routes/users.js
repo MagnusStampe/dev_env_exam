@@ -24,7 +24,7 @@ router.post('/users/logout', (req, res) => {
 //##    POST    ##
 // User session
 router.post('/users/session', (req, res) => {
-    if(!req.session.userID) return res.status(200).send({status: 0, message: 'Not logged in'})
+    if (!req.session.userID) return res.status(200).send({ status: 0, message: 'Not logged in' })
 
     return res.status(200).send(
         {
@@ -40,9 +40,106 @@ router.post('/users/session', (req, res) => {
     )
 })
 
+router.post('/delete-user', async (req, res) => {
+    const { id, userType } = req.body;
+
+    if (userType === "user") {
+        const findCreditcardID = `
+        SELECT "nCreditcardID"
+        FROM tCreditcard
+        WHERE "nUserID" = '${id}'
+    `
+        console.log("type: User")
+        try {
+
+            const creditcardResult = await client.query(findCreditcardID)
+            const creditcardID = creditcardResult.rows[0].nCreditcardID
+
+            const queryDeletePayments = `DELETE FROM tPayment WHERE "nCreditcardID" = '${creditcardID}';`
+            const queryDeleteRents = `DELETE FROM tUser WHERE "nUserID" = '${id}';`
+            const queryDeleteCreditcard = `DELETE FROM tCreditcard WHERE "nUserID" = '${id}';`
+            const queryDeleteUser = `DELETE FROM tUser WHERE "nUserID" = '${id}';`
+
+            const deletePayments = await client.query(queryDeletePayments)
+            const deleteCreditcard = await client.query(queryDeleteCreditcard)
+            const deleteRents = await client.query(queryDeleteRents)
+            const deleteUser = await client.query(queryDeleteUser)
+            console.log("success")
+
+            return res.status(200).send({ status: 1, message: id + ' successfully deleted' })
+        } catch (err) {
+            console.log(err)
+
+        }
+
+    } else {
+        console.log("property owner")
+        console.log(id, userType)
+        const findProperties = `
+        SELECT * from tProperty WHERE "nPropertyOwnerID" = '${id}'
+        `
+        client.query(findProperties, (err, dbRes) => {
+            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+            console.log(dbRes.rows)
+
+            const propertyIDs = dbRes.rows
+            if (!propertyIDs[0]) {
+                const queryDeletePropertyOwner = `DELETE FROM tPropertyOwner WHERE "nPropertyOwnerID" = '${id}'`
+                client.query(queryDeletePropertyOwner, (err, dbRes) => {
+                    console.log(err)
+
+                    if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+                    console.log("ALL GONE")
+
+                    return res.status(200).send({ status: 1, message: id + ' successfully deleted' })
+                })
+            }
+
+            propertyIDs.map((ID) => {
+                const propertyID = ID.nPropertyID
+                console.log(propertyID)
+                const queryDeleteFacilities = `DELETE FROM tFacility WHERE "nPropertyID" = '${propertyID}';`
+                const queryDeleteImages = `DELETE FROM tPropertyImage WHERE "nPropertyID" = '${propertyID}';`
+                const queryDeleteProperty = `DELETE FROM tProperty WHERE "nPropertyID" = '${propertyID}';`
+
+                client.query(queryDeleteFacilities, (err, dbRes) => {
+                    console.log(err)
+                    if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+                    console.log("FACILITES GONE")
+
+                    client.query(queryDeleteImages, (err, dbRes) => {
+                        console.log(err)
+                        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+                        if (!dbRes) {
+                            console.log('No pics')
+                        }
+
+                        client.query(queryDeleteProperty, (err, dbRes) => {
+                            console.log(err)
+
+                            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+                            console.log("PROPERTIES GONE")
+
+                            const queryDeletePropertyOwner = `DELETE FROM tPropertyOwner WHERE "nPropertyOwnerID" = '${propertyID}'`
+                            client.query(queryDeletePropertyOwner, (err, dbRes) => {
+                                console.log(err)
+
+                                if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+                                console.log("ALL GONE")
+
+                                return res.status(200).send({ status: 1, message: id + ' successfully deleted' })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    }
+})
+
 // User information
 router.post('/users/information', (req, res) => {
-    if(!req.session.userID) return res.status(404).send({status: 0, message: 'Not logged in'})
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const query = `
         SELECT * 

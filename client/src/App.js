@@ -109,7 +109,7 @@ class App extends Component {
             <Route path="/signup" component={props => <Signup {...props} updateAuth={authStatus} />} />
             <Route
               path="/profile"
-              component={props => <Profile {...props} auth={auth} />}
+              component={props => <Profile {...props} auth={auth} updateAuth={authStatus} />}
             />
 
 
