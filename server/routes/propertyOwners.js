@@ -56,23 +56,32 @@ router.post('/property-owners/information', (req, res) => {
         SELECT * 
         FROM tPropertyOwner 
         JOIN tPhoneCode ON tPropertyOwner."nPhoneCodeID" = tPhonecode."nPhoneCodeID" 
-        JOIN tCountryCode ON tPropertyOwner."nCountryCodeID" = tCountryCode."nCountryCodeID" 
+        JOIN tCountryCode ON tPropertyOwner."nCountryCodeID" = tCountryCode."nCountryCodeID"
         WHERE tPropertyOwner."cEmail" = '${req.session.email}'
     `
 
     client.query(query, (err, dbRes) => {
-        if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+        if (err) {
+            console.log(err)
+            return res.status(500).send({ status: 0, message: 'Server error' })
+        }
         if (!dbRes.rows[0]) return res.status(404).send({ status: 0, message: 'User not found' })
 
         const propertyQuery = `
-            SELECT tProperty.*
+            SELECT *
             FROM tPropertyOwner
-            JOIN tProperty ON tPropertyOwner."nPropertyOwnerID" = '${req.session.userID}'
+            JOIN tProperty ON tPropertyOwner."nPropertyOwnerID" = tProperty."nPropertyOwnerID"
+            JOIN tPropertyImage ON tProperty."nPropertyID" = tPropertyImage."nPropertyID"
+            WHERE tPropertyOwner."nPropertyOwnerID" = '${req.session.userID}'
         `
         const result = dbRes.rows[0]
 
         client.query(propertyQuery, (err, dbRes) => {
-            if (err) return res.status(500).send({ status: 0, message: 'Server error' })
+            if (err) {
+                console.log(err)
+                return res.status(500).send({ status: 0, message: 'Server error' })
+            }
+
             if (!dbRes.rows[0]) return res.status(200).send({
                 status: 1, message: 'User found', user: {
                     username: result.cUsername,
@@ -83,7 +92,8 @@ router.post('/property-owners/information', (req, res) => {
                     phoneNumber: result.cPhoneNumber,
                     IBAN: result.cIBANcode,
                     CVV: result.cCVV,
-                    expDate: result.cExpirationDate
+                    expDate: result.cExpirationDate,
+                    image: result.byteaImage
                 }
             })
 
@@ -98,6 +108,7 @@ router.post('/property-owners/information', (req, res) => {
                     IBAN: result.cIBANcode,
                     CVV: result.cCVV,
                     expDate: result.cExpirationDate,
+                    image: result.byteaImage,
                     properties: dbRes.rows
                 }
             })
@@ -108,7 +119,7 @@ router.post('/property-owners/information', (req, res) => {
 //##    PATCH    ##
 // Update user
 router.patch('/property-owners', (req, res) => {
-    if(!req.session.userID) return res.status(404).send({ status: 0, message: 'Already logged in' })
+    if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Already logged in' })
 
     const {
         username,
@@ -116,18 +127,18 @@ router.patch('/property-owners', (req, res) => {
         password
     } = req.body
 
-    if(
+    if (
         !username
         || !email
     ) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
 
 
-    const query =`
+    const query = `
         UPDATE tPropertyOwner 
         SET "cUsername" = '${username}', "cEmail" = '${email}'
         WHERE "nPropertyOwnerID" = '${req.session.userID}'
     `
-    const queryWithPassword =`
+    const queryWithPassword = `
         UPDATE tPropertyOwner 
         SET "cUsername" = '${username}', "cEmail" = '${email}', "cPassword" = '${password}'
         WHERE "nPropertyOwnerID" = '${req.session.userID}'
@@ -139,7 +150,7 @@ router.patch('/property-owners', (req, res) => {
         req.session.email = email
         req.session.username = username
 
-        return res.status(200).send({status: 1, message: 'User updated'})
+        return res.status(200).send({ status: 1, message: 'User updated' })
     })
 })
 

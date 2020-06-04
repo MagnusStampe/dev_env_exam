@@ -26,19 +26,20 @@ class Login extends Component {
     const options = {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-          email: email, 
-          password: password,
+        email: email,
+        password: password,
       }),
       credentials: 'include'
     }
     await fetch(`http://localhost:8080/${userType === 'guest' ? 'users' : 'property-owners'}/login`, options)
       .then(res => res.json())
       .then(res => {
-        if(res.status !== 1) return console.log(res)
+        if (res.status !== 1) return console.log(res)
         this.props.updateAuth()
+        window.scrollTo(0, 0);
         this.props.history.push('/')
       })
       .catch(err => console.log(err))
@@ -54,21 +55,21 @@ class Login extends Component {
               <InputTag
                 type="email"
                 value={this.state.email}
-                onChange={event => this.setState({email: event.target.value})}
+                onChange={event => this.setState({ email: event.target.value })}
                 label="E-mail"
                 name="email"
               />
               <InputTag
                 type="password"
                 value={this.state.password}
-                onChange={event => this.setState({password: event.target.value})}
+                onChange={event => this.setState({ password: event.target.value })}
                 label="Password"
                 name="password"
               />
               <select
                 className={styles.selectUserContainer}
                 name="userType"
-                onChange={event => this.setState({userType: event.target.value})}
+                onChange={event => this.setState({ userType: event.target.value })}
               >
                 <option value="guest">Guest</option>
                 <option value="property_owner">Property owner</option>

@@ -80,6 +80,7 @@ class Signup extends Component {
       .then(res => {
         if (res.status !== 1) return
         this.props.updateAuth()
+        window.scrollTo(0, 0);
         this.props.history.push('/')
       })
       .catch(err => err.message

@@ -22,21 +22,23 @@ class UpdateProperty extends Component {
   getUser = async () => {
     const url = new URL('http://placeholder.com' + this.props.location.search);
     const propertyID = url.searchParams.get('id');
-    
+
     await fetch(`http://localhost:8080/property?id=${propertyID}`)
-        .then(res => res.json())
-        .then(res => {
-            this.setState({
-                propertyID,
-                title: res.property.cTitle,
-                description: res.property.cDescription,
-                price: res.property.nPrice,
-                wifi: res.property.bEthernet,
-                animals: res.property.bAnimals,
-                familyFriendly: res.property.bFamilyFriendly
-            })
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          propertyID,
+          title: res.property.cTitle,
+          description: res.property.cDescription,
+          price: res.property.nPrice,
+          wifi: res.property.bEthernet,
+          animals: res.property.bAnimals,
+          familyFriendly: res.property.bFamilyFriendly
         })
-        .catch(err => console.log(err))
+        window.scrollTo(0, 0);
+        this.props.history.push('/profile')
+      })
+      .catch(err => console.log(err))
   }
 
   handleSubmit = async event => {
@@ -90,7 +92,7 @@ class UpdateProperty extends Component {
                     <div className={styles.subTitle} />
                     <InputTag type="checkbox" checked={wifi} label="Wifi" name="wifi" onChange={event => this.setState({ ethernet: event.target.checked })} />
                     <InputTag type="checkbox" checked={animals} label="Animals" name="animals" onChange={event => this.setState({ animals: event.target.checked })} />
-                    <InputTag type="checkbox" checked={familyFriendly} label="Family Friendly" name="family" onChange={event => this.setState({ familyFriendly: event.target.checked })}/>
+                    <InputTag type="checkbox" checked={familyFriendly} label="Family Friendly" name="family" onChange={event => this.setState({ familyFriendly: event.target.checked })} />
                     <div className={styles.submitContainer}>
                       <button className={styles.submitButton}>
                         Update property

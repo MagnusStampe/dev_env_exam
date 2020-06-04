@@ -20,7 +20,7 @@
     color: #135F6D;
     white-space: nowrap;
     margin: 0;
-    margin-bottom: 16px;
+
     overflow: hidden;
 }
 
@@ -54,4 +54,17 @@
     font-size: 27px;
     text-align: right;
     color: #135F6D;
+}
+
+.viewButton {
+border: 1px solid #000;
+border-radius: 5px;
+text-decoration: none;
+padding: 8px;
+margin: 8px;
+margin-left: 0;
+font-size: 16px;
+color: #fff;
+background-color: #2096ab;
+border: none;
 }

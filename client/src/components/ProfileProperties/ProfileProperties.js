@@ -31,11 +31,9 @@ export default class ProfileProperties extends Component {
                 <div className={styles.propertiesContainer}>
                     {this.props.properties && this.props.properties.map((property, index) => (
                         <div key={index}>
-                            <PropertyCard data={{
-                                title: property.cTitle,
-                                body: property.cDescription,
-                                nPropertyID: property.nPropertyID
-                            }} />
+                            <PropertyCard data={
+                                property
+                            } />
                             <Link to={`/update-property?id=${property.nPropertyID}`} className={styles.updateButton}>Update property</Link>
                             <button className={styles.deleteButton} onClick={() => this.deleteProperty(property.nPropertyID)}>Delete property</button>
                         </div>

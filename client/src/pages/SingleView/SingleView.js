@@ -232,5 +232,4 @@ class SingleView extends Component {
   }
 }
 
-
 export default withRouter(SingleView);
