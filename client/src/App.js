@@ -71,7 +71,6 @@ class App extends Component {
 
   render() {
     const {
-      onTravelInfoChange,
       authStatus,
       state: {
         auth
@@ -103,7 +102,7 @@ class App extends Component {
             />
             <Route
               path="/property"
-              component={props => <SingleView {...props} />}
+              component={props => <SingleView {...props} auth={auth} />}
             />
             <Route path="/login" component={props => <Login {...props} updateAuth={authStatus} />} />
             <Route path="/signup" component={props => <Signup {...props} updateAuth={authStatus} />} />
@@ -111,10 +110,6 @@ class App extends Component {
               path="/profile"
               component={props => <Profile {...props} auth={auth} updateAuth={authStatus} />}
             />
-
-
-
-
           </Switch>
         </div>
       </Router>

@@ -42,7 +42,6 @@ router.post('/property/rent', (req, res) => {
     if (!req.session.userID) return res.status(404).send({ status: 0, message: 'Not logged in' })
 
     const {
-        userID,
         propertyID,
         startDate,
         endDate,
@@ -50,8 +49,7 @@ router.post('/property/rent', (req, res) => {
     } = req.body
 
     if (
-        !userID
-        || !propertyID
+        !propertyID
         || !startDate
         || !endDate
         || !userType
@@ -60,18 +58,19 @@ router.post('/property/rent', (req, res) => {
     if(userType !== 'user') return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
     
     const queryFindPrice = `
-        SELECT nPrice FROM tProperty
-        WHERE nPropertyID = '${propertyID}'
+        SELECT tProperty."nPrice" FROM tProperty
+        WHERE tProperty."nPropertyID" = '${propertyID}'
     `
 
     client.query(queryFindPrice, (err, dbRes) => {
+        console.log(err)
         if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
         const rentCost = dbRes.rows[0].nPrice
 
         const queryProcedure = `
         CALL procedurecreaterentdeal(
-            '${userID}', 
+            '${req.session.userID}', 
             '${propertyID}', 
             '${startDate}', 
             '${endDate}', 
@@ -80,9 +79,10 @@ router.post('/property/rent', (req, res) => {
         `
 
         client.query(queryProcedure, (err, dbRes) => {
+            console.log(err)
             if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 
-            const result = test.row
+            console.log(dbRes)
             return res.status(200).send({ status: 0, message: 'Property rented successfully' })
         })
     })
@@ -152,32 +152,24 @@ router.post('/properties/create', (req, res) => {
 router.get('/properties', async (req, res) => {
     const {
         startDate,
-        endDate
+        endDate,
+        city
     } = req.query
-    if (!startDate || !endDate) return res.status(404).send({ status: 0, message: 'Dates not provided' })
+    if (!startDate || !endDate || !city) return res.status(404).send({ status: 0, message: 'Insufficient parameters provided' })
+
     query = `
-        SELECT tProperty.* , tPropertyType.*, tFacility.*
+        SELECT tRented."nRentID", tProperty."nPrice", tProperty."nPropertyID", tRented."dStart", tRented."dEnd", tCity."cCityName"
         FROM tRented
-        FULL JOIN tProperty
+        RIGHT JOIN tProperty    
         ON tRented."nPropertyID" = tProperty."nPropertyID"
-        JOIN tPropertyType 
-        on tProperty."nPropertyID" = tPropertyType."nTypeID"
-        JOIN tFacility 
-        ON tProperty."nPropertyID" = tFacility."nPropertyID"
-        JOIN tCity
-        ON tProperty."nCityID" = tCity."nCityID"
-        WHERE '${startDate}' < tRented."dStart"
-        OR '${endDate}' > tRented."dEnd"
-        OR NOT EXISTS (
-            SELECT * 
-            FROM tRented 
-            WHERE tRented."nPropertyID" = tProperty."nPropertyID")
-        OR tRented."nPropertyID" NOT IN (
-            SELECT tProperty."nPropertyID"
-            FROM tProperty 
-        )
-        ORDER BY tProperty."nPropertyID"
+        RIGHT JOIN tCity
+        ON tCity."nCityID" = tProperty."nCityID"
+        WHERE tCity."cCityName" = '${city}'
+        AND (('${endDate}' < tRented."dStart" OR '${startDate}' > tRented."dEnd") OR ( tRented."dStart" IS NULL OR tRented."dEnd" IS NULL))
+        
+        ORDER BY tProperty."nPropertyID" DESC
     `
+
     client.query(query, (err, dbRes) => {
         if (err) return res.status(500).send({ status: 0, message: 'Server error' })
 

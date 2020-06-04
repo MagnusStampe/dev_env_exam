@@ -16,13 +16,11 @@ export default class HeaderMain extends Component {
     this.setState({
       [event.target.name]: event.target.value
     });
-    console.log(this.state);
   };
 
   onFormSubmit = e => {
     e.preventDefault()
     const { destination, checkIn, checkOut, guests } = this.state;
-    console.log(this.state);
     this.props.handleTravelChanges(destination, checkIn, checkOut, guests);
     this.props.history.push("/search")
   }
@@ -39,7 +37,6 @@ export default class HeaderMain extends Component {
     await fetch("http://localhost:8080/users/logout", options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         if (res.status !== 1) return console.log(res)
         this.props.updateAuth()
         this.props.history.push("/")

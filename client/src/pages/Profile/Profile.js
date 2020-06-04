@@ -97,8 +97,8 @@ class Profile extends Component {
                   <p>Phone number: +({user.phoneCode}) {user.phoneNumber}</p>
                   <p>Country code: {user.countryCode}</p>
                   <button className={styles.deleteButton} onClick={() => this.deleteUser()}>Delete user</button>
+                  <Link className={styles.updateButton} to="/update-profile">Update profile</Link>
                 </div>
-                <Link to="/update-profile">Update profile</Link>
               </div>
 
               <div className={styles.wrapperContainer}>

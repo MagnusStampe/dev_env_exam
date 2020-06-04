@@ -7,18 +7,21 @@ import styles from './PropertyCard.module.css'
 class PropertyCard extends Component {
 
     seeProperty = (id) => {
+        const {
+            checkIn,
+            checkOut
+        } = this.props.searchQueries
+
         this.props.history.push({
             pathname: "/property",
-            search: `?id=${id}`
+            search: `?id=${id}&checkIn=${checkIn}&checkOut=${checkOut}`
         })
     }
+
     render() {
         const {
             cTitle,
             cDescription,
-            nPrice,
-            cHouseSize,
-            nSize,
             nPropertyID
         } = this.props.data
 

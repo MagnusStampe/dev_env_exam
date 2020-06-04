@@ -36,3 +36,18 @@
   border: none;
   width: 200px;
 }
+
+.updateButton {
+  border: 1px solid #000;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  padding: 8px;
+  margin: 8px;
+  margin-left: 0;
+  font-size: 16px;
+  color: #fff;
+  background-color: #2096ab;
+  border: none;
+  width: 200px;
+}

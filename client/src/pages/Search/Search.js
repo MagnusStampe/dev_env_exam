@@ -13,18 +13,12 @@ export default class Search extends Component {
     }
 
     async componentDidMount() {
-        const { checkIn, checkOut } = this.props.searchQueries;
-        if (!checkIn || !checkOut) return
-        await fetch(`http://localhost:8080/properties?startDate=${checkIn}&endDate=${checkOut}`)
+        const { checkIn, checkOut, destination } = this.props.searchQueries;
+        if (!checkIn || !checkOut || !destination) return
+        await fetch(`http://localhost:8080/properties?startDate=${checkIn}&endDate=${checkOut}&city=${destination}`)
             .then(res => res.json())
-            .then(res => {
-                this.setState({ data: res, isLoading: false })
-                console.log(res);
-
-            })
+            .then(res => this.setState({ data: res, isLoading: false }))
             .catch(error => console.log(error))
-
-
     }
 
 
