@@ -56,7 +56,7 @@ class SingleView extends Component {
       const differenceInDays = differenceInTime / (1000 * 3600 * 24);
 
       if (differenceInDays !== days) this.setState({ days: differenceInDays });
-      
+
       return this.calculateTotalPrice();
     }
   };
@@ -71,23 +71,6 @@ class SingleView extends Component {
 
 
   render() {
-    const property = {
-      owner: "Elias Marco Lip FK",
-      type: "House FK",
-      city: "Copenhagen FK",
-      title: "yeet house",
-      body: "This is a house blablablalbla - more houseoes hsouehsouehoseuhosuehs",
-      address: "Somegade 24",
-      size: 4,
-      houseSize: 200,
-      price: 300,
-      currency: "$"
-    };
-
-    const propertyAssets = {
-      wifi: "Yes",
-      pets: "Pets allowed"
-    };
 
     const {
       data: {
@@ -216,7 +199,7 @@ class SingleView extends Component {
               <div className={styles.bookingContainer}>
                 <div className={styles.bookingTitle}>
                   <h2>Booking</h2>
-                  <h3>{property.price + property.currency} / night {this.calculateDays()}</h3>
+                  <h3>{nPrice}$ / night {this.calculateDays()}</h3>
                 </div>
                 <div className={styles.formContainer}>
                   <form className={styles.form}>

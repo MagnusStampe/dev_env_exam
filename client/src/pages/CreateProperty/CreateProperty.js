@@ -34,7 +34,11 @@ export default class CreateProperty extends Component {
 
     await fetch('http://localhost:8080/properties/create', options)
       .then(res => res.json())
-      .then(res => console.log(res))
+      .then(res => {
+        console.log(res);
+        window.scrollTo(0, 0);
+        this.props.history.push('/profile')
+      })
       .catch(err => console.log(err))
   }
 

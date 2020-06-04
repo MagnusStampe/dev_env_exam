@@ -56,9 +56,9 @@ router.post('/property/rent', (req, res) => {
         || !endDate
         || !userType
     ) return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
-    
-    if(userType !== 'user') return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
-    
+
+    if (userType !== 'user') return res.status(404).send({ status: 0, message: 'Insuffient parameters provided' })
+
     const queryFindPrice = `
         SELECT nPrice FROM tProperty
         WHERE nPropertyID = '${propertyID}'
@@ -226,7 +226,7 @@ router.patch('/property', (req, res) => {
 
     client.query(updateProperty, (err, dbRes) => {
         if (err) return res.status(500).send({ status: 0, message: 'Server error' })
-        
+
         client.query(updateFacilities, (err, dbRes) => {
             if (err) return res.status(500).send({ status: 0, message: 'Server error' })
             return res.status(200).send({ status: 1, message: 'Success' })

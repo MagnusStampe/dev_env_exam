@@ -13,6 +13,7 @@ class Profile extends Component {
   }
 
   seeProperty = (id) => {
+    window.scrollTo(0, 0);
     this.props.history.push({
       pathname: "/property",
       search: `?id=${id}`
@@ -83,9 +84,6 @@ class Profile extends Component {
         <div className={styles.mainContainer}>
           <div className={styles.container}>
             <h1 className={styles.title}>Profile</h1>
-            <div className={styles.userTitle}>
-              {user.username}
-            </div>
           </div>
           <div className={styles.container}>
             <div className={styles.wrapper}>
@@ -98,7 +96,7 @@ class Profile extends Component {
                   <p>Country code: {user.countryCode}</p>
                   <button className={styles.deleteButton} onClick={() => this.deleteUser()}>Delete user</button>
                 </div>
-                <Link to="/update-profile">Update profile</Link>
+                <Link to="/update-profile" className={styles.updateButton}>Update profile</Link>
               </div>
 
               <div className={styles.wrapperContainer}>
